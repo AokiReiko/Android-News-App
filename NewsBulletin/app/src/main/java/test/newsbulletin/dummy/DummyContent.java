@@ -1,37 +1,120 @@
 package test.newsbulletin.dummy;
+import android.util.Log;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
+import java.net.HttpURLConnection;
 /**
  * Helper class for providing sample content for user interfaces created by
  * Android template wizards.
- * <p>
+ * <p/>
  * TODO: Replace all uses of this class before publishing your app.
  */
 public class DummyContent {
 
     /**
-     * An array of sample (dummy) items.
+     * An array of news items and their initialization.
      */
-    public static final List<DummyItem> ITEMS = new ArrayList<DummyItem>();
+    public static List<DummyItem> ITEMS = new ArrayList<DummyItem>();
+    public static int pageNumber = 0;
+    public static final String traverse_base_url = "http://166.111.68.66:2042/news/action/query/latest";
+    static {
+        loadMore();
+    }
 
     /**
      * A map of sample (dummy) items, by ID.
      */
-    public static final Map<String, DummyItem> ITEM_MAP = new HashMap<String, DummyItem>();
+    public static Map<String, DummyItem> ITEM_MAP = new HashMap<String, DummyItem>();
 
     private static final int COUNT = 25;
 
-    static {
-        // Add some sample items.
-        for (int i = 1; i <= COUNT; i++) {
-            addItem(createDummyItem(i));
-        }
+    static String getSpecificPageUrl(int pageNo) {
+        return traverse_base_url + "?pageNo=" + pageNo;
     }
+    public static synchronized void loadMore(){
+        /* Not do this in our main thread. */
+        pageNumber += 1;
+        Thread thread=new Thread(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                int resCode = -1;
+                String required_url = getSpecificPageUrl(pageNumber);
+                try {
+                    /* Open the url */
+                    URL url = new URL(required_url);
+                    HttpURLConnection cnt = (HttpURLConnection)url.openConnection();
+                    cnt.setRequestMethod("GET");
+                    cnt.setConnectTimeout(5*1000);
 
+                    InputStream in = cnt.getInputStream();
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+
+                    /* Get all the content of the html */
+                    String html = "";
+                    {
+                        String line;
+                        while ((line = reader.readLine()) != null) {
+                            html += line;
+                        }
+                    }
+
+                    //ToDo(aokireiko):judge when the connection fails.
+                    resCode = cnt.getResponseCode();
+
+                    if (resCode == HttpURLConnection.HTTP_OK) {
+                        Log.d("func","" + resCode);
+                    }
+
+                    JSONObject js_obj = new JSONObject(html);
+                    JSONArray news_list = js_obj.getJSONArray("list");
+
+                    for (int i = ITEMS.size(); i < news_list.length(); i++) {
+                        JSONObject obj = news_list.getJSONObject(i);
+                        Log.d("func", obj.toString());
+                        addItem(new DummyItem(String.valueOf(i),obj.getString("news_Title"),obj.getString("news_Intro")));
+                    }
+
+
+                } catch (MalformedURLException eurl){
+                    Log.d("func","url error");
+
+                } catch (IOException eio) {
+                    eio.printStackTrace();
+                    Log.d("func","io error "+eio.getMessage());
+
+                } catch (JSONException ejson) {
+                    Log.d("func","json error "+ ejson.getMessage());
+
+                } catch (Exception eso) {
+                    Log.d("func", eso.getMessage());
+                }
+            }
+        });
+        thread.start();
+
+        Log.d("func", "http finished");
+        // Add some sample items.
+
+
+    }
     private static void addItem(DummyItem item) {
         ITEMS.add(item);
         ITEM_MAP.put(item.id, item);
