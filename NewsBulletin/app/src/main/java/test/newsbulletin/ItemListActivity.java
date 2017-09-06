@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,6 +15,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TabHost;
+import android.widget.TableLayout;
 import android.widget.TextView;
 
 
@@ -49,6 +52,9 @@ public class ItemListActivity extends AppCompatActivity {
         toolbar.setTitle(getTitle());
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tablayout);
+        setupTabLayout(tabLayout);
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -79,6 +85,28 @@ public class ItemListActivity extends AppCompatActivity {
         super.onRestart();
         scrollToPosition();
     }
+    private void setupTabLayout(@NonNull TabLayout tabLayout) {
+        Log.d("func", "set up tabhost");
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                Log.d("func", "tab Id: " + tab.getPosition());
+            }
+            @Override
+
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+
+        });
+
+    }
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
         recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(DummyContent.ITEMS));
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -100,7 +128,6 @@ public class ItemListActivity extends AppCompatActivity {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-                Log.d("func", "statuc change "+itemSize + "-" + ((SimpleItemRecyclerViewAdapter)recyclerView.getAdapter()).mValues.size() + "-"  + recyclerView.hasPendingAdapterUpdates());
                 if (lastItem == recyclerView.getAdapter().getItemCount() - 1 && newState == RecyclerView.SCROLL_STATE_IDLE ) {
                     isLoad = true;
                     ((SimpleItemRecyclerViewAdapter)recyclerView.getAdapter()).loadMore();

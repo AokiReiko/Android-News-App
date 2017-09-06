@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">NewsBulletin</string>
     <string name="title_item_detail">Item Detail</string>
+    <string name="tab0">最新</string>
+    <string name="tab1">国内</string>
+    <string name="tab2">科技</string>
 </resources>
