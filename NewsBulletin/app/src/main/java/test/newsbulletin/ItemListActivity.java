@@ -36,7 +36,9 @@ public class ItemListActivity extends AppCompatActivity {
      * device.
      */
     private boolean mTwoPane;
-
+    private int lastOffset;
+    private int lastPosition;
+    View recyclerView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,7 +57,7 @@ public class ItemListActivity extends AppCompatActivity {
             }
         });
 
-        View recyclerView = findViewById(R.id.item_list);
+        recyclerView = findViewById(R.id.item_list);
         assert recyclerView != null;
         setupRecyclerView((RecyclerView) recyclerView);
 
@@ -71,7 +73,7 @@ public class ItemListActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
+        scrollToPosition();
     }
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
         recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(DummyContent.ITEMS));
@@ -90,14 +92,7 @@ public class ItemListActivity extends AppCompatActivity {
                 itemSize = recyclerView.getAdapter().getItemCount();recyclerView.getLayoutManager().getItemCount();
                 lastItem = ((LinearLayoutManager)recyclerView.getLayoutManager()).findLastVisibleItemPosition();
                 firstItem = ((LinearLayoutManager)recyclerView.getLayoutManager()).findFirstVisibleItemPosition();
-                if (lastItem == itemSize - 1 ) {
-                    isLoad = true;
-                    recyclerView.computeScroll();
-                    ((SimpleItemRecyclerViewAdapter)recyclerView.getAdapter()).loadMore();
 
-                }
-                // To update the pre-layout list.
-                recyclerView.getAdapter().notifyDataSetChanged();
             }
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -106,15 +101,33 @@ public class ItemListActivity extends AppCompatActivity {
                 if (lastItem == recyclerView.getAdapter().getItemCount() - 1 && newState == RecyclerView.SCROLL_STATE_IDLE ) {
                     isLoad = true;
                     recyclerView.smoothScrollToPosition(lastItem);
-
-                    //((SimpleItemRecyclerViewAdapter)recyclerView.getAdapter()).loadMore();
-                    //recyclerView.getAdapter().notifyDataSetChanged();
+                    ((SimpleItemRecyclerViewAdapter)recyclerView.getAdapter()).loadMore();
+                }
+                // To update the pre-layout list.
+                recyclerView.getAdapter().notifyDataSetChanged();
+                if(recyclerView.getLayoutManager() != null) {
+                    getPositionAndOffset();
                 }
 
             }
         });
     }
-
+    private void getPositionAndOffset() {
+        LinearLayoutManager layoutManager = (LinearLayoutManager) ((RecyclerView)recyclerView).getLayoutManager();
+        //获取可视的第一个view
+        View topView = layoutManager.getChildAt(0);
+        if(topView != null) {
+            //获取与该view的顶部的偏移量
+            lastOffset = topView.getTop();
+            //得到该View的数组位置
+            lastPosition = layoutManager.getPosition(topView);
+        }
+    }
+    private void scrollToPosition() {
+        if(((RecyclerView)recyclerView).getLayoutManager() != null && lastPosition >= 0) {
+            ((LinearLayoutManager) ((RecyclerView)recyclerView).getLayoutManager()).scrollToPositionWithOffset(lastPosition, lastOffset);
+        }
+    }
     public class SimpleItemRecyclerViewAdapter
             extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder> {
 
