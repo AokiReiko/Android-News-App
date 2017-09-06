@@ -36,8 +36,8 @@ public class ItemListActivity extends AppCompatActivity {
      * device.
      */
     private boolean mTwoPane;
-    private int lastOffset;
-    private int lastPosition;
+    static private int lastOffset = 0;
+    static private int lastPosition = 0;
     View recyclerView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +75,10 @@ public class ItemListActivity extends AppCompatActivity {
         super.onResume();
         scrollToPosition();
     }
+    protected void onRestart() {
+        super.onRestart();
+        scrollToPosition();
+    }
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
         recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(DummyContent.ITEMS));
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -92,7 +96,6 @@ public class ItemListActivity extends AppCompatActivity {
                 itemSize = recyclerView.getAdapter().getItemCount();recyclerView.getLayoutManager().getItemCount();
                 lastItem = ((LinearLayoutManager)recyclerView.getLayoutManager()).findLastVisibleItemPosition();
                 firstItem = ((LinearLayoutManager)recyclerView.getLayoutManager()).findFirstVisibleItemPosition();
-
             }
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -100,7 +103,6 @@ public class ItemListActivity extends AppCompatActivity {
                 Log.d("func", "statuc change "+itemSize + "-" + ((SimpleItemRecyclerViewAdapter)recyclerView.getAdapter()).mValues.size() + "-"  + recyclerView.hasPendingAdapterUpdates());
                 if (lastItem == recyclerView.getAdapter().getItemCount() - 1 && newState == RecyclerView.SCROLL_STATE_IDLE ) {
                     isLoad = true;
-                    recyclerView.smoothScrollToPosition(lastItem);
                     ((SimpleItemRecyclerViewAdapter)recyclerView.getAdapter()).loadMore();
                 }
                 // To update the pre-layout list.
@@ -112,15 +114,16 @@ public class ItemListActivity extends AppCompatActivity {
             }
         });
     }
-    private void getPositionAndOffset() {
+     private void getPositionAndOffset() {
         LinearLayoutManager layoutManager = (LinearLayoutManager) ((RecyclerView)recyclerView).getLayoutManager();
         //获取可视的第一个view
-        View topView = layoutManager.getChildAt(0);
+        int topIndex = layoutManager.findFirstVisibleItemPosition();
+        View topView = layoutManager.findViewByPosition(topIndex);
         if(topView != null) {
             //获取与该view的顶部的偏移量
             lastOffset = topView.getTop();
             //得到该View的数组位置
-            lastPosition = layoutManager.getPosition(topView);
+            lastPosition = topIndex;
         }
     }
     private void scrollToPosition() {
