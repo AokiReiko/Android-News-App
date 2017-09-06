@@ -58,12 +58,7 @@ public class ItemListActivity extends AppCompatActivity {
         View recyclerView = findViewById(R.id.item_list);
         assert recyclerView != null;
         setupRecyclerView((RecyclerView) recyclerView);
-        ((RecyclerView) recyclerView).addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                ((SimpleItemRecyclerViewAdapter)recyclerView.getAdapter()).loadMore();
-            }
-        });
+
         if (findViewById(R.id.item_detail_container) != null) {
             // The detail container view will be present only in the
             // large-screen layouts (res/values-w900dp).
@@ -73,8 +68,51 @@ public class ItemListActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+    }
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
         recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(DummyContent.ITEMS));
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+
+            private int lastItem = 0;
+            private int firstItem = 0;
+            private int itemSize = 0;
+            private boolean isLoad = false;
+
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                itemSize = recyclerView.getAdapter().getItemCount();recyclerView.getLayoutManager().getItemCount();
+                lastItem = ((LinearLayoutManager)recyclerView.getLayoutManager()).findLastVisibleItemPosition();
+                firstItem = ((LinearLayoutManager)recyclerView.getLayoutManager()).findFirstVisibleItemPosition();
+                if (lastItem == itemSize - 1 ) {
+                    isLoad = true;
+                    recyclerView.computeScroll();
+                    ((SimpleItemRecyclerViewAdapter)recyclerView.getAdapter()).loadMore();
+
+                }
+                // To update the pre-layout list.
+                recyclerView.getAdapter().notifyDataSetChanged();
+            }
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                Log.d("func", "statuc change "+itemSize + "-" + ((SimpleItemRecyclerViewAdapter)recyclerView.getAdapter()).mValues.size() + "-"  + recyclerView.hasPendingAdapterUpdates());
+                if (lastItem == recyclerView.getAdapter().getItemCount() - 1 && newState == RecyclerView.SCROLL_STATE_IDLE ) {
+                    isLoad = true;
+                    recyclerView.smoothScrollToPosition(lastItem);
+
+                    //((SimpleItemRecyclerViewAdapter)recyclerView.getAdapter()).loadMore();
+                    //recyclerView.getAdapter().notifyDataSetChanged();
+                }
+
+            }
+        });
     }
 
     public class SimpleItemRecyclerViewAdapter

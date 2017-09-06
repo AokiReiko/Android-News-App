@@ -31,7 +31,7 @@ public class DummyContent {
      * An array of news items and their initialization.
      */
     public static List<DummyItem> ITEMS = new ArrayList<DummyItem>();
-    public static int pageNumber = 0;
+    public static int pageNumber = 1;
     public static final String traverse_base_url = "http://166.111.68.66:2042/news/action/query/latest";
     static {
         loadMore();
@@ -49,7 +49,7 @@ public class DummyContent {
     }
     public static synchronized void loadMore(){
         /* Not do this in our main thread. */
-        pageNumber += 1;
+        Log.d("func", "loading page " + pageNumber + ". " + "Size: " + ITEMS.size());
         Thread thread=new Thread(new Runnable()
         {
             @Override
@@ -86,12 +86,13 @@ public class DummyContent {
                     JSONObject js_obj = new JSONObject(html);
                     JSONArray news_list = js_obj.getJSONArray("list");
 
-                    for (int i = ITEMS.size(); i < news_list.length(); i++) {
+                    for (int i = 0; i < news_list.length(); i++) {
                         JSONObject obj = news_list.getJSONObject(i);
-                        Log.d("func", obj.toString());
-                        addItem(new DummyItem(String.valueOf(i),obj.getString("news_Title"),obj.getString("news_Intro")));
+                        //Log.d("func", "add " + i);
+                        addItem(new DummyItem(String.valueOf(ITEMS.size()),obj.getString("news_Title"),obj.getString("news_Intro")));
                     }
 
+                    pageNumber += 1;
 
                 } catch (MalformedURLException eurl){
                     Log.d("func","url error");
