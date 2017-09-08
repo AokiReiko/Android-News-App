@@ -1,5 +1,7 @@
 package test.newsbulletin;
 
+import android.app.SearchManager;
+import android.app.SearchableInfo;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,15 +11,18 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Adapter;
@@ -49,7 +54,7 @@ public class ItemListActivity extends AppCompatActivity {
      */
     private boolean mTwoPane;
     private DrawerLayout mDrawerLayout;
-
+    private SearchView mSearchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +65,6 @@ public class ItemListActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         toolbar.setTitle(getTitle());
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -90,6 +94,9 @@ public class ItemListActivity extends AppCompatActivity {
             // activity should be in two-pane mode.
             mTwoPane = true;
         }
+
+        mSearchView = (SearchView) findViewById(R.id.searchView);
+        mSearchView.setSubmitButtonEnabled(false);
     }
 
     private void setupViewPager(ViewPager viewPager) {
@@ -126,7 +133,17 @@ public class ItemListActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_search, menu);
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
+        SearchableInfo info = searchManager.getSearchableInfo(getComponentName());
+        searchView.setSearchableInfo(info);
 
+        searchView.setIconifiedByDefault(false); // Do not iconify the widget; expand it by default
+        return true;
+    }
     public class mAdapter extends FragmentPagerAdapter {
         private final List<Fragment> mFragments = new ArrayList<>();
         private final List<String> mFragmentTitles = new ArrayList<>();

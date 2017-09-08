@@ -144,6 +144,7 @@ public class ItemListFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     Context context = v.getContext();
+
                     Intent intent = new Intent(context, ItemDetailActivity.class);
                     intent.putExtra(ItemDetailFragment.ARG_ITEM_ID, holder.mItem.id);
 
