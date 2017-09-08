@@ -19,6 +19,7 @@ import android.support.v7.widget.RecyclerView;
 import java.util.List;
 
 import test.newsbulletin.dummy.DummyContent;
+import test.newsbulletin.model.NewsList;
 
 
 /**
@@ -83,7 +84,7 @@ public class ItemListFragment extends Fragment {
 
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(DummyContent.ITEMS));
+        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(new NewsList()));
         recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext()));
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
 
@@ -119,10 +120,10 @@ public class ItemListFragment extends Fragment {
     public class SimpleItemRecyclerViewAdapter
             extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder> {
 
-        private final List<DummyContent.DummyItem> mValues;
+        private final NewsList mnewsList;
 
-        public SimpleItemRecyclerViewAdapter(List<DummyContent.DummyItem> items) {
-            mValues = items;
+        public SimpleItemRecyclerViewAdapter(NewsList newsList) {
+            mnewsList = newsList;
         }
 
         public void loadMore() { DummyContent.loadMore(); }
@@ -136,9 +137,9 @@ public class ItemListFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(final ViewHolder holder, int position) {
-            holder.mItem = mValues.get(position);
-            holder.mIdView.setText(mValues.get(position).id);
-            holder.mContentView.setText(mValues.get(position).content);
+            holder.mItem = mnewsList.get(position);
+            holder.mIdView.setText(mnewsList.get(position).id);
+            holder.mContentView.setText(mnewsList.get(position).content);
             //Log.d("func", holder.toString()+"-"+position + "-" + holder.mContentView.getText());
             holder.mView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -155,14 +156,14 @@ public class ItemListFragment extends Fragment {
 
         @Override
         public int getItemCount() {
-            return mValues.size();
+            return mnewsList.size();
         }
 
         public class ViewHolder extends RecyclerView.ViewHolder {
             public final View mView;
             public final TextView mIdView;
             public final TextView mContentView;
-            public DummyContent.DummyItem mItem;
+            public NewsList.NewsListItem mItem;
 
             public ViewHolder(View view) {
                 super(view);

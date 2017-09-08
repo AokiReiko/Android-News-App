@@ -97,6 +97,7 @@ public class ItemListActivity extends AppCompatActivity {
 
         mSearchView = (SearchView) findViewById(R.id.searchView);
         mSearchView.setSubmitButtonEnabled(false);
+        mSearchView.clearFocus();
     }
 
     private void setupViewPager(ViewPager viewPager) {
