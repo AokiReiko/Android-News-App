@@ -3,8 +3,6 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
-    <color name="colorNotRead">#999999</color>
-    <color name="colorRead">#FFFFFF</color>
-    <color name="Text_Color">#000000</color>
-    <color name="Background">#ffffff</color>
+    <color name="Text_Color">#ffffff</color>
+    <color name="Background">#685e5e</color>
 </resources>

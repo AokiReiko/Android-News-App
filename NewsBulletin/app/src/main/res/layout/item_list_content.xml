@@ -9,17 +9,23 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/text_margin"
+<<<<<<< HEAD
         android:textAppearance="?attr/textAppearanceListItem" />-->
     <ImageView
         android:id="@+id/avatar"
         android:layout_width="@dimen/list_item_avatar_size"
         android:layout_height="@dimen/list_item_avatar_size"
         android:layout_marginRight="16dp"/>
+=======
+        android:textColor="@color/Text_Color"
+        android:textAppearance="?attr/textAppearanceListItem" />
+>>>>>>> e1bc53472365a48304b66c213d8d9749c3681b6b
 
     <TextView
         android:id="@+id/content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="@color/Text_Color"
         android:layout_margin="@dimen/text_margin"
         android:textAppearance="?attr/textAppearanceListItem" />
 </LinearLayout>

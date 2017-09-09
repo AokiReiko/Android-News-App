@@ -1,6 +1,12 @@
 package test.newsbulletin;
 
+<<<<<<< HEAD
 import android.app.ActivityManager;
+=======
+import android.content.res.Configuration;
+import android.os.Build;
+import android.os.Bundle;
+>>>>>>> e1bc53472365a48304b66c213d8d9749c3681b6b
 import android.app.SearchManager;
 import android.app.SearchableInfo;
 import android.content.Context;
@@ -8,6 +14,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+<<<<<<< HEAD
+=======
+import android.support.design.widget.NavigationView.OnNavigationItemSelectedListener;
+>>>>>>> e1bc53472365a48304b66c213d8d9749c3681b6b
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -16,6 +26,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -35,9 +46,12 @@ import android.widget.ArrayAdapter;
 import android.widget.TabHost;
 import android.widget.TableLayout;
 import android.widget.TextView;
-
+import android.app.Application;
+import android.view.MenuItem;
+import android.support.design.widget.NavigationView;
 
 import test.newsbulletin.dummy.DummyContent;
+import test.newsbulletin.model.Data;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -51,7 +65,8 @@ import java.util.List;
  * item details. On tablets, the activity presents the list of items and
  * item details side-by-side using two vertical panes.
  */
-public class ItemListActivity extends AppCompatActivity {
+public class ItemListActivity extends AppCompatActivity
+{
 
     /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
@@ -60,11 +75,15 @@ public class ItemListActivity extends AppCompatActivity {
     private boolean mTwoPane;
     private DrawerLayout mDrawerLayout;
     private SearchView mSearchView;
+<<<<<<< HEAD
     private ViewPager viewPager;
     private ArrayList<String> tabList = new ArrayList<>();
 
+=======
+    Data find_day = new Data();
+>>>>>>> e1bc53472365a48304b66c213d8d9749c3681b6b
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
 
@@ -77,7 +96,7 @@ public class ItemListActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setTitle(getTitle());
-
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 
         buildTabList();
@@ -93,6 +112,7 @@ public class ItemListActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+<<<<<<< HEAD
                 Intent textIntent = new Intent(Intent.ACTION_SEND);
                 textIntent.setType("text/plain");
                 textIntent.putExtra(Intent.EXTRA_TEXT, "这是一段分享的文字");
@@ -100,8 +120,15 @@ public class ItemListActivity extends AppCompatActivity {
 
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
+=======
+                int currentNightMode = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+                getDelegate().setLocalNightMode(currentNightMode == Configuration.UI_MODE_NIGHT_NO ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO);
+
+                recreate();
+>>>>>>> e1bc53472365a48304b66c213d8d9749c3681b6b
             }
         });
+
 
 
 
@@ -117,6 +144,16 @@ public class ItemListActivity extends AppCompatActivity {
         mSearchView = (SearchView) findViewById(R.id.searchView);
         mSearchView.setSubmitButtonEnabled(false);
         mSearchView.clearFocus();
+<<<<<<< HEAD
+=======
+    }
+    private void setNightMode(@AppCompatDelegate.NightMode int nightMode) {
+        AppCompatDelegate.setDefaultNightMode(nightMode);
+        if (Build.VERSION.SDK_INT >= 11) {
+            recreate();
+        }
+    }
+>>>>>>> e1bc53472365a48304b66c213d8d9749c3681b6b
 
 
     }
@@ -225,6 +262,30 @@ public class ItemListActivity extends AppCompatActivity {
         searchView.setIconifiedByDefault(false); // Do not iconify the widget; expand it by default
         return true;
     }
+
+/*    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        Log.v("NO","gotin");
+        switch(item.getItemId())
+        {
+            case R.id.daylight:
+                getDelegate().setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                recreate();
+                Log.v("NO","gotin");
+                break;
+            case R.id.nightlight:
+                getDelegate().setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                recreate();
+                Log.v("NO","gotin");
+                break;
+            default:
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }DrawerLayout Menu 的点击事件**/
+
+
     public class mAdapter extends FragmentPagerAdapter {
         private final List<Fragment> mFragments = new ArrayList<>();
         private final List<String> mFragmentTitles = new ArrayList<>();
