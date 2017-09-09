@@ -9,9 +9,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import test.newsbulletin.dummy.DummyContent;
-import test.newsbulletin.model.NewsList;
+import test.newsbulletin.model.DetailList;
 
+import android.util.Log;
 /**
  * A fragment representing a single Item detail screen.
  * This fragment is either contained in a {@link ItemListActivity}
@@ -28,7 +28,7 @@ public class ItemDetailFragment extends Fragment {
     /**
      * The dummy content this fragment is presenting.
      */
-    private NewsList.NewsListItem mItem;
+    public DetailList mList = new DetailList(ARG_ITEM_ID);
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -50,7 +50,7 @@ public class ItemDetailFragment extends Fragment {
             Activity activity = this.getActivity();
             CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
             if (appBarLayout != null) {
-                appBarLayout.setTitle("test");
+                appBarLayout.setTitle("分类");
             }
         }
     }
@@ -61,10 +61,34 @@ public class ItemDetailFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.item_detail, container, false);
 
         // Show the dummy content as text in a TextView.
-        if (mItem != null) {
-            ((TextView) rootView.findViewById(R.id.item_detail)).setText("details");
+        if (mList != null) {
+            ((TextView) rootView.findViewById(R.id.item_detail)).setText("标题");
         }
+        Log.v("layout",mList.pageID);
+        return rootView;
+    }
 
+    public View onCreateView3(LayoutInflater inflater, ViewGroup container,
+                              Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.item_detail, container, false);
+
+        // Show the dummy content as text in a TextView.
+        if (mList != null) {
+            ((TextView) rootView.findViewById(R.id.item_author)).setText("作者");
+        }
+        Log.v("layout",mList.pageID);
+        return rootView;
+    }
+
+    public View onCreateView2(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.item_detail, container, false);
+
+        // Show the dummy content as text in a TextView.
+        if (mList != null) {
+            ((TextView) rootView.findViewById(R.id.item_title)).setText("正文");
+        }
+        Log.v("layout",mList.pageID);
         return rootView;
     }
 }
