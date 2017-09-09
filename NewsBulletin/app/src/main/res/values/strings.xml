@@ -1,11 +1,9 @@
 <resources>
     <string name="app_name">NewsBulletin</string>
     <string name="title_item_detail">Item Detail</string>
-    <string name="tab0">最新</string>
-    <string name="tab1">国内</string>
-    <string name="tab2">科技</string>
     <string name="search">搜索</string>
     <string name="search_hint">搜索</string>
+    <string name="action_settings">Settings</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

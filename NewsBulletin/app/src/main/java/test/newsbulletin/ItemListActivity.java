@@ -1,5 +1,6 @@
 package test.newsbulletin;
 
+import android.app.ActivityManager;
 import android.app.SearchManager;
 import android.app.SearchableInfo;
 import android.content.Context;
@@ -38,6 +39,7 @@ import android.widget.TextView;
 
 import test.newsbulletin.dummy.DummyContent;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,6 +60,8 @@ public class ItemListActivity extends AppCompatActivity {
     private boolean mTwoPane;
     private DrawerLayout mDrawerLayout;
     private SearchView mSearchView;
+    private ViewPager viewPager;
+    private ArrayList<String> tabList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,15 +79,17 @@ public class ItemListActivity extends AppCompatActivity {
         toolbar.setTitle(getTitle());
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+
+        buildTabList();
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tablayout);
         setupTabLayout(tabLayout);
 
-        ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
+        viewPager = (ViewPager) findViewById(R.id.viewpager);
         tabLayout.setupWithViewPager(viewPager);
         if (viewPager != null) {
             setupViewPager(viewPager);
         }
-
+        Context c;
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -91,7 +97,6 @@ public class ItemListActivity extends AppCompatActivity {
                 textIntent.setType("text/plain");
                 textIntent.putExtra(Intent.EXTRA_TEXT, "这是一段分享的文字");
                 startActivity(Intent.createChooser(textIntent, "分享"));
-
 
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
@@ -108,25 +113,43 @@ public class ItemListActivity extends AppCompatActivity {
             mTwoPane = true;
         }
 
+        //搜索框
         mSearchView = (SearchView) findViewById(R.id.searchView);
         mSearchView.setSubmitButtonEnabled(false);
         mSearchView.clearFocus();
-    }
 
+
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        setupViewPager(viewPager);
+    }
     private void setupViewPager(ViewPager viewPager) {
 
         mAdapter adapter = new mAdapter(this.getSupportFragmentManager());
-        adapter.addFragment(new ItemListFragment(), "Category 1");
-        adapter.addFragment(new Fragment(), "Category 2");
-        adapter.addFragment(new Fragment(), "Category 3");
+        for (String tab_name: tabList) {
+            adapter.addFragment(new ItemListFragment(), tab_name);
+        }
+        /*
+        adapter.addFragment(new ItemListFragment(), "最新");
+        adapter.addFragment(new Fragment(), "国内");
+        adapter.addFragment(new Fragment(), "科技");
+        adapter.addFragment(new Fragment(), "财经");
+        adapter.addFragment(new Fragment(), "娱乐");*/
         viewPager.setAdapter(adapter);
     }
+
     private void setupDrawerContent(NavigationView navigationView) {
         navigationView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
                     @Override
                     public boolean onNavigationItemSelected(MenuItem menuItem) {
                         Log.d("func", menuItem.getTitle()+"");
+                        Intent intent = new Intent(mDrawerLayout.getContext(), DragTabActivity.class);
+                        intent.putStringArrayListExtra("TAB_LIST", tabList);
+                        startActivity(intent);
+                        Log.d("func", "after activity");
                         switch (menuItem.getItemId()) {
                             case R.id.nav_discussion:
                                 Log.d("func", "nav_discuss");
@@ -138,11 +161,13 @@ public class ItemListActivity extends AppCompatActivity {
                         menuItem.setChecked(true);
                         mDrawerLayout.closeDrawers();
                         return true;
+
                     }
                 });
     }
     private void setupTabLayout(@NonNull TabLayout tabLayout) {
         Log.d("func", "set up tabhost");
+        tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
@@ -170,6 +195,7 @@ public class ItemListActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Log.d("func", ""+item.getTitle());
+
         switch (item.getItemId()) {
 
             case android.R.id.home:
@@ -227,5 +253,13 @@ public class ItemListActivity extends AppCompatActivity {
             return mFragmentTitles.get(position);
         }
     }
-
+    private void  buildTabList() {
+        // ToDo(zps):if there is config file, read it.
+        tabList.add("最新");
+        tabList.add("国内");
+        tabList.add("科技");
+        tabList.add("财经");
+        tabList.add("娱乐");
+        tabList.add("体育");
+    }
 }
