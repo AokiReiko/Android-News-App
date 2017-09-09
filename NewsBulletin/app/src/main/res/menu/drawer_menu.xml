@@ -16,12 +16,18 @@
             android:title="Discussion" />
     </group>
 
-    <item android:title="Sub items">
+    <item android:title="设置模式">
         <menu>
             <item
-                android:title="Sub item 1" />
+                android:id="@+id/daylight"
+                android:title="白天模式"
+                android:checkable="true"
+                 />
             <item
-                android:title="Sub item 2" />
+                android:id="@+id/nightlight"
+                android:title="黑夜模式"
+                android:checkable="true"
+                />
         </menu>
     </item>
 
