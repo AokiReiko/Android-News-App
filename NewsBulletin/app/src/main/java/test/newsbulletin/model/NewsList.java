@@ -1,4 +1,6 @@
 package test.newsbulletin.model;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -92,7 +94,7 @@ public class NewsList {
                     for (int i = 0; i < news_list.length(); i++) {
                         JSONObject obj = news_list.getJSONObject(i);
                         //Log.d("func", "add " + i);
-                        addItem(new NewsListItem(String.valueOf(newsList.size()),obj.getString("news_Title"),obj.getString("news_ID")));
+                        addItem(new NewsListItem(String.valueOf(newsList.size()),obj.getString("news_Title"),obj.getString("news_ID"), obj.getString("news_Pictures")));
                     }
 
                     pageNumber += 1;
@@ -124,9 +126,6 @@ public class NewsList {
         newsMap.put(item.id, item);
     }
 
-    private static NewsListItem createDummyItem(int position) {
-        return new NewsListItem(String.valueOf(position), "Item " + position, makeDetails(position));
-    }
 
     private static String makeDetails(int position) {
         StringBuilder builder = new StringBuilder();
@@ -144,16 +143,45 @@ public class NewsList {
         public final String id;
         public final String content;
         public final String news_id;
+        public final Bitmap news_pictrue;
+        public boolean isRead = false;
 
-        public NewsListItem(String id, String content, String news_id) {
+        public NewsListItem(String id, String content, String news_id, String url) {
             this.id = id;
             this.content = content;
             this.news_id = news_id;
+            news_pictrue = getHttpBitmap(url);
         }
 
         @Override
         public String toString() {
             return content;
         }
+        public void markRead() {
+            isRead = true;
+        }
+        public static Bitmap getHttpBitmap(String url) {
+            URL myFileUrl = null;
+            Bitmap bitmap = null;
+            try {
+                Log.d("func", url);
+                myFileUrl = new URL(url);
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+            try {
+                HttpURLConnection conn = (HttpURLConnection) myFileUrl.openConnection();
+                conn.setConnectTimeout(0);
+                conn.setDoInput(true);
+                conn.connect();
+                InputStream is = conn.getInputStream();
+                bitmap = BitmapFactory.decodeStream(is);
+                is.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return bitmap;
+        }
+
     }
 }

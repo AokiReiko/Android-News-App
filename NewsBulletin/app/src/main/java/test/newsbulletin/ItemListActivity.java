@@ -6,9 +6,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -23,6 +25,7 @@ import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Adapter;
@@ -60,8 +63,12 @@ public class ItemListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        if (navigationView != null) {
+            setupDrawerContent(navigationView);
+        }
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -80,6 +87,12 @@ public class ItemListActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Intent textIntent = new Intent(Intent.ACTION_SEND);
+                textIntent.setType("text/plain");
+                textIntent.putExtra(Intent.EXTRA_TEXT, "这是一段分享的文字");
+                startActivity(Intent.createChooser(textIntent, "分享"));
+
+
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
@@ -108,12 +121,33 @@ public class ItemListActivity extends AppCompatActivity {
         adapter.addFragment(new Fragment(), "Category 3");
         viewPager.setAdapter(adapter);
     }
+    private void setupDrawerContent(NavigationView navigationView) {
+        navigationView.setNavigationItemSelectedListener(
+                new NavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(MenuItem menuItem) {
+                        Log.d("func", menuItem.getTitle()+"");
+                        switch (menuItem.getItemId()) {
+                            case R.id.nav_discussion:
+                                Log.d("func", "nav_discuss");
+                            case R.id.nav_friends:
+                                Log.d("func", "discuss_nav");
+                            case R.id.nav_messages:
+                                Log.d("func", "message_nav");
+                        }
+                        menuItem.setChecked(true);
+                        mDrawerLayout.closeDrawers();
+                        return true;
+                    }
+                });
+    }
     private void setupTabLayout(@NonNull TabLayout tabLayout) {
         Log.d("func", "set up tabhost");
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 Log.d("func", "tab Id: " + tab.getPosition());
+
                 if (tab.getPosition() != 0) {
                 }
             }
@@ -133,7 +167,27 @@ public class ItemListActivity extends AppCompatActivity {
         });
 
     }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Log.d("func", ""+item.getTitle());
+        switch (item.getItemId()) {
 
+            case android.R.id.home:
+                mDrawerLayout.openDrawer(GravityCompat.START);
+                return true;
+            case R.id.nav_discussion:
+                Log.d("func", "discuss");
+                break;
+            case R.id.nav_friends:
+                Log.d("func", "friends");
+                break;
+            case R.id.nav_messages:
+                Log.d("func","messages");
+                break;
+
+        }
+        return super.onOptionsItemSelected(item);
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_search, menu);

@@ -12,6 +12,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.support.v7.widget.RecyclerView;
@@ -138,7 +140,8 @@ public class ItemListFragment extends Fragment {
         @Override
         public void onBindViewHolder(final ViewHolder holder, int position) {
             holder.mItem = mnewsList.get(position);
-            holder.mIdView.setText(mnewsList.get(position).id);
+            //holder.mIdView.setText(mnewsList.get(position).id);
+            holder.mImageView.setImageResource(R.drawable.ic_launcher);
             holder.mContentView.setText(mnewsList.get(position).content);
             //Log.d("func", holder.toString()+"-"+position + "-" + holder.mContentView.getText());
             holder.mView.setOnClickListener(new View.OnClickListener() {
@@ -161,14 +164,16 @@ public class ItemListFragment extends Fragment {
 
         public class ViewHolder extends RecyclerView.ViewHolder {
             public final View mView;
-            public final TextView mIdView;
+            //public final TextView mIdView;
             public final TextView mContentView;
+            public final ImageView mImageView;
             public NewsList.NewsListItem mItem;
 
             public ViewHolder(View view) {
                 super(view);
                 mView = view;
-                mIdView = (TextView) view.findViewById(R.id.id);
+                //mIdView = (TextView) view.findViewById(R.id.id);
+                mImageView = (ImageView) view.findViewById(R.id.avatar);
                 mContentView = (TextView) view.findViewById(R.id.content);
             }
 
