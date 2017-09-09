@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.iflytek.result.xml;
+package com.iflytek.ise.result.xml;
 
 import android.text.TextUtils;
 import android.util.Xml;

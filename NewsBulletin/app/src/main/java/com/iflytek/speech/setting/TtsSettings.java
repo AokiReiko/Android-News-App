@@ -8,6 +8,7 @@ import android.preference.PreferenceActivity;
 import android.view.Window;
 
 import com.iflytek.speech.util.SettingTextWatcher;
+
 import test.newsbulletin.R;
 
 
