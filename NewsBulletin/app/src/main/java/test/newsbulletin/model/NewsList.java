@@ -92,7 +92,7 @@ public class NewsList {
                     for (int i = 0; i < news_list.length(); i++) {
                         JSONObject obj = news_list.getJSONObject(i);
                         //Log.d("func", "add " + i);
-                        addItem(new NewsListItem(String.valueOf(newsList.size()),obj.getString("news_Title"),obj.getString("news_Intro")));
+                        addItem(new NewsListItem(String.valueOf(newsList.size()),obj.getString("news_Title"),obj.getString("news_ID")));
                     }
 
                     pageNumber += 1;
@@ -143,12 +143,12 @@ public class NewsList {
     public static class NewsListItem {
         public final String id;
         public final String content;
-        public final String details;
+        public final String news_id;
 
-        public NewsListItem(String id, String content, String details) {
+        public NewsListItem(String id, String content, String news_id) {
             this.id = id;
             this.content = content;
-            this.details = details;
+            this.news_id = news_id;
         }
 
         @Override

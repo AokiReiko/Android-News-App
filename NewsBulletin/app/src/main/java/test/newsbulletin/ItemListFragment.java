@@ -126,7 +126,7 @@ public class ItemListFragment extends Fragment {
             mnewsList = newsList;
         }
 
-        public void loadMore() { DummyContent.loadMore(); }
+        public void loadMore() { mnewsList.loadMore(); }
 
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -147,7 +147,7 @@ public class ItemListFragment extends Fragment {
                     Context context = v.getContext();
 
                     Intent intent = new Intent(context, ItemDetailActivity.class);
-                    intent.putExtra(ItemDetailFragment.ARG_ITEM_ID, holder.mItem.id);
+                    intent.putExtra(ItemDetailFragment.ARG_ITEM_ID, holder.mItem.news_id);
 
                     context.startActivity(intent);
                 }
