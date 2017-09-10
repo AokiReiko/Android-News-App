@@ -49,6 +49,7 @@ import android.widget.Toast;
 import android.widget.ImageView;
 
 import test.newsbulletin.dummy.DummyContent;
+import test.newsbulletin.file.FileIO;
 import test.newsbulletin.model.Data;
 
 import java.lang.reflect.Array;
@@ -77,10 +78,19 @@ public class ItemListActivity extends AppCompatActivity
     private ArrayList<String> tabList = new ArrayList<>();
     private ArrayList<String> unusedTabList = new ArrayList<>();
     Data find_day = new Data();
+    FileIO io;
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         Log.d("func","main oncreate");
+        io = new FileIO(this);
+        boolean is_loaded = io.loadConfig();
+        if(!is_loaded)
+        {
+            Log.d("func","first time loading config");
+            find_day.buildTabList();
+        }
         setContentView(R.layout.main_activity);
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -140,6 +150,15 @@ public class ItemListActivity extends AppCompatActivity
         Log.d("func","resume");
         setupViewPager(viewPager);
     }
+
+    @Override
+    public void onDestroy()
+    {
+        io.saveConfig();
+        Log.d("func", "destroy");
+        super.onDestroy();
+    }
+
     private void setupViewPager(ViewPager viewPager) {
 
         mAdapter adapter = new mAdapter(this.getSupportFragmentManager());
@@ -336,4 +355,5 @@ public class ItemListActivity extends AppCompatActivity
         unusedTabList = mAppData.getUnusedTabList();
         tabList = mAppData.getTabList();
     }
+
 }
