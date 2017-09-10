@@ -27,9 +27,9 @@ public class ItemDetailFragment extends Fragment {
     public static final String ARG_ITEM_ID = "item_id";
 
     /**
-     * The dummy content this fragment is presenting.
-     */
-    public DetailList mList = new DetailList(ARG_ITEM_ID);
+     * The dummy content this fragment is presenting. */
+
+    private DetailList mList;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -41,13 +41,13 @@ public class ItemDetailFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        Log.d("func", "111");
         if (getArguments().containsKey(ARG_ITEM_ID)) {
             // Load the dummy content specified by the fragment
             // arguments. In a real-world scenario, use a Loader
             // to load content from a content provider.
             Log.d("func", getArguments().getString(ARG_ITEM_ID));
-
+            mList  = new DetailList(getArguments().getString(ARG_ITEM_ID));
             Activity activity = this.getActivity();
             CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
             if (appBarLayout != null) {
@@ -59,37 +59,18 @@ public class ItemDetailFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         View rootView = inflater.inflate(R.layout.item_detail, container, false);
+        Log.d("func", "FUCK");
 
         // Show the dummy content as text in a TextView.
         if (mList != null) {
-            ((TextView) rootView.findViewById(R.id.item_detail)).setText("标题");
+            ((TextView) rootView.findViewById(R.id.item_detail)).setText(mList.newsList.Content);
+            ((TextView) rootView.findViewById(R.id.item_author)).setText(mList.newsList.Author);
+            ((TextView) rootView.findViewById(R.id.item_title)).setText(mList.newsList.Title);
         }
-        Log.v("layout",mList.pageID);
+        Log.v("layout","!!!");
         return rootView;
     }
 
-    public View onCreateView3(LayoutInflater inflater, ViewGroup container,
-                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.item_detail, container, false);
-
-        // Show the dummy content as text in a TextView.
-        if (mList != null) {
-            ((TextView) rootView.findViewById(R.id.item_author)).setText("作者");
-        }
-        Log.v("layout",mList.pageID);
-        return rootView;
-    }
-
-    public View onCreateView2(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.item_detail, container, false);
-
-        // Show the dummy content as text in a TextView.
-        if (mList != null) {
-            ((TextView) rootView.findViewById(R.id.item_title)).setText("正文");
-        }
-        Log.v("layout",mList.pageID);
-        return rootView;
-    }
 }

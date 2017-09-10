@@ -33,14 +33,18 @@ public class DetailList {
 
     private static final String traverse_base_url = "http://166.111.68.66:2042/news/action/query/detail";
     public String pageID;
-    static String getSpecificPageUrl(String detailID) {return traverse_base_url + "?newsID=" + detailID;}
-    public DetailList(String pageid) {
-        pageID = pageid;
-        loadMore();
+    static String getSpecificPageUrl(String detailID) {return traverse_base_url + "?newsId=" + detailID;}
+    public DetailList(String paged) {
+        pageID = paged;
+        try {
+            loadMore();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
-    private synchronized void loadMore(){
+    private synchronized void loadMore() throws InterruptedException {
         /* Not do this in our main thread. */
-        Log.d("func", "loading page " + pageID );
+        Log.d("func", "ID !!! " + pageID );
         Thread thread=new Thread(new Runnable()
         {
             @Override
@@ -48,6 +52,7 @@ public class DetailList {
             {
                 int resCode = -1;
                 String required_url = getSpecificPageUrl(pageID);
+                Log.d("func", required_url);
                 try {
                     /* Open the url */
                     URL url = new URL(required_url);
@@ -65,7 +70,6 @@ public class DetailList {
                             html += line;
                         }
                     }
-
                     //ToDo(aokireiko):judge when the connection fails.
                     resCode = cnt.getResponseCode();
 
@@ -74,13 +78,9 @@ public class DetailList {
                     }
 
                     JSONObject js_obj = new JSONObject(html);
-                    JSONArray news_list = js_obj.getJSONArray("list");
 
-                    for (int i = 0; i < news_list.length(); i++) {
-                        JSONObject obj = news_list.getJSONObject(i);
-                        //Log.d("func", "add " + i);
-                        addItem(new NewsListItem(pageID,obj.getString("news_Title"),obj.getString("news_Author"),obj.getString("news_Content")));
-                    }
+
+                    addItem(new NewsListItem(pageID,js_obj.getString("news_Title"),js_obj.getString("news_Author"),js_obj.getString("news_Content")));
 
 
                 } catch (MalformedURLException eurl){
@@ -99,8 +99,11 @@ public class DetailList {
             }
         });
         thread.start();
-
-        Log.d("func", "http finished");
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         // Add some sample items.
 
 
