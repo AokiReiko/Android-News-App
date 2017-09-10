@@ -84,12 +84,14 @@ public class ItemListActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
 
         Log.d("func","main oncreate");
+
         io = new FileIO(this);
+        Data data = (Data) getApplication();
         boolean is_loaded = io.loadConfig();
         if(!is_loaded)
         {
             Log.d("func","first time loading config");
-            find_day.buildTabList();
+            data.buildTabList();
         }
         setContentView(R.layout.main_activity);
 
