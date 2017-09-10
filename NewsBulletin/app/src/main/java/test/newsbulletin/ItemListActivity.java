@@ -77,7 +77,9 @@ public class ItemListActivity extends AppCompatActivity
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d("func","main oncreate");
         setContentView(R.layout.main_activity);
+        Log.d("func","main oncreate");
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -145,15 +147,16 @@ public class ItemListActivity extends AppCompatActivity
     private void setupViewPager(ViewPager viewPager) {
 
         mAdapter adapter = new mAdapter(this.getSupportFragmentManager());
-        for (String tab_name: tabList) {
+        /*for (String tab_name: tabList) {
             adapter.addFragment(new ItemListFragment(), tab_name);
+
         }
-        /*
+        */
         adapter.addFragment(new ItemListFragment(), "最新");
         adapter.addFragment(new Fragment(), "国内");
         adapter.addFragment(new Fragment(), "科技");
         adapter.addFragment(new Fragment(), "财经");
-        adapter.addFragment(new Fragment(), "娱乐");*/
+        adapter.addFragment(new Fragment(), "娱乐");
         viewPager.setAdapter(adapter);
     }
 
@@ -161,7 +164,7 @@ public class ItemListActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
                     @Override
-                    public boolean onNavigationItemSelected(MenuItem menuItem) {
+                    public boolean onNavigationItemSelected(MenuItem menuItem) {/*
                         Log.d("func", menuItem.getTitle()+"");
                         Intent intent = new Intent(mDrawerLayout.getContext(), DragTabActivity.class);
                         intent.putStringArrayListExtra("TAB_LIST", tabList);
@@ -171,7 +174,7 @@ public class ItemListActivity extends AppCompatActivity
                         Log.d("list",tabList.toString());
                         Log.d("list",unusedTabList.toString());
                         startActivity(intent);
-                        Log.d("func", "after activity");
+                        Log.d("func", "after activity");*/
                         switch (menuItem.getItemId()) {
                             case R.id.nav_discussion:
                                 Log.d("func", "nav_discuss");

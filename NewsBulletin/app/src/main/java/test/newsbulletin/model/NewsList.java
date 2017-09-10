@@ -65,6 +65,7 @@ public class NewsList {
                 try {
                     /* Open the url */
                     URL url = new URL(required_url);
+                    Log.d("func",required_url);
                     HttpURLConnection cnt = (HttpURLConnection)url.openConnection();
                     cnt.setRequestMethod("GET");
                     cnt.setConnectTimeout(5*1000);
@@ -90,10 +91,8 @@ public class NewsList {
 
                     JSONObject js_obj = new JSONObject(html);
                     JSONArray news_list = js_obj.getJSONArray("list");
-
                     for (int i = 0; i < news_list.length(); i++) {
                         JSONObject obj = news_list.getJSONObject(i);
-                        //Log.d("func", "add " + i);
                         addItem(new NewsListItem(String.valueOf(newsList.size()),obj.getString("news_Title"),obj.getString("news_ID"), obj.getString("news_Pictures")));
                     }
 
@@ -143,14 +142,14 @@ public class NewsList {
         public final String id;
         public final String content;
         public final String news_id;
-        public final Bitmap news_pictrue;
+        public final Bitmap news_picture;
         public boolean isRead = false;
 
         public NewsListItem(String id, String content, String news_id, String url) {
             this.id = id;
             this.content = content;
             this.news_id = news_id;
-            news_pictrue = getHttpBitmap(url);
+            news_picture = null;//getHttpBitmap(url);
         }
 
         @Override
