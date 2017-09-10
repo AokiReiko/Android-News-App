@@ -15,6 +15,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import test.newsbulletin.model.Data;
 import z.sye.space.library.DragRecyclerView;
 import z.sye.space.library.UnsignedRecyclerView;
 import z.sye.space.library.interfaces.OnItemClickListener;
@@ -37,43 +38,17 @@ public class DragTabActivity extends Activity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         //setSupportActionBar(toolbar);
         Log.d("func","1");
-        List<String> dragList = new ArrayList<>();
-        dragList.add("头条");
-        dragList.add("热点");
-        dragList.add("体育");
-        dragList.add("军事");
-        dragList.add("足球");
-        dragList.add("订阅");
-        dragList.add("NBA");
-        dragList.add("国足");
-        dragList.add("科技");
-        dragList.add("娱乐");
-        dragList.add("本地");
-        dragList.add("财经");
-        dragList.add("图片");
-        dragList.add("跟帖");
-        dragList.add("直播");
-        dragList.add("时尚");
-        dragList.add("段子");
-        dragList.add("漫画");
-        dragList.add("游戏");
-        dragList.add("影视");
+        final List<String> dragList;
+        Data mAppData = (Data) getApplication();
+        //dragList = getIntent().getStringArrayListExtra("TAB_LIST");
+        dragList = mAppData.getTabList();
+        Log.d("list",dragList.toString());
 
-        List<String> unsignedList = new ArrayList<>();
-        unsignedList.add("原创");
-        unsignedList.add("历史");
-        unsignedList.add("彩票");
-        unsignedList.add("数码");
-        unsignedList.add("汽车");
-        unsignedList.add("家居");
-        unsignedList.add("旅游");
-        unsignedList.add("健康");
-        unsignedList.add("读书");
-        unsignedList.add("教育");
-        unsignedList.add("艺术");
-        unsignedList.add("论坛");
-        unsignedList.add("博客");
-        unsignedList.add("情感");
+        final List<String> unsignedList;
+        //unsignedList = getIntent().getStringArrayListExtra("UNUSED_TAB_LIST");
+        unsignedList = mAppData.getUnusedTabList();
+        Log.d("list",unsignedList.toString());
+
 
         mDragView = (DragRecyclerView) findViewById(R.id.dragView);
         Log.d("func","2");
@@ -94,7 +69,13 @@ public class DragTabActivity extends Activity {
                 .onItemRemoved(new OnItemRemovedListener<String>() {
                     @Override
                     public void onItemRemoved(int position, String removedItem) {
+                        Toast.makeText(DragTabActivity.this,
+                                "position" + position + "has been removed", Toast.LENGTH_SHORT).show();
                         mUnsignedView.addItem(removedItem);
+                        unsignedList.add(dragList.get(position));
+                        dragList.remove(position);
+                        Toast.makeText(DragTabActivity.this,
+                                "draglist:"+dragList.hashCode(), Toast.LENGTH_SHORT).show();
                     }
                 })
                 .keepItemCount(2)
@@ -118,6 +99,8 @@ public class DragTabActivity extends Activity {
                     @Override
                     public void onItemRemoved(int position, String removedItem) {
                         mDragView.addItem(removedItem);
+                        dragList.add(unsignedList.get(position));
+                        unsignedList.remove(position);
                     }
                 })
                 .build();

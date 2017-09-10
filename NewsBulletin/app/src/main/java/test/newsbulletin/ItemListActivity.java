@@ -1,12 +1,9 @@
 package test.newsbulletin;
 
-<<<<<<< HEAD
 import android.app.ActivityManager;
-=======
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
->>>>>>> e1bc53472365a48304b66c213d8d9749c3681b6b
 import android.app.SearchManager;
 import android.app.SearchableInfo;
 import android.content.Context;
@@ -14,10 +11,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
-<<<<<<< HEAD
-=======
 import android.support.design.widget.NavigationView.OnNavigationItemSelectedListener;
->>>>>>> e1bc53472365a48304b66c213d8d9749c3681b6b
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -49,6 +43,7 @@ import android.widget.TextView;
 import android.app.Application;
 import android.view.MenuItem;
 import android.support.design.widget.NavigationView;
+import android.widget.Toast;
 
 import test.newsbulletin.dummy.DummyContent;
 import test.newsbulletin.model.Data;
@@ -75,13 +70,10 @@ public class ItemListActivity extends AppCompatActivity
     private boolean mTwoPane;
     private DrawerLayout mDrawerLayout;
     private SearchView mSearchView;
-<<<<<<< HEAD
     private ViewPager viewPager;
     private ArrayList<String> tabList = new ArrayList<>();
-
-=======
+    private ArrayList<String> unusedTabList = new ArrayList<>();
     Data find_day = new Data();
->>>>>>> e1bc53472365a48304b66c213d8d9749c3681b6b
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -112,20 +104,10 @@ public class ItemListActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-<<<<<<< HEAD
-                Intent textIntent = new Intent(Intent.ACTION_SEND);
-                textIntent.setType("text/plain");
-                textIntent.putExtra(Intent.EXTRA_TEXT, "这是一段分享的文字");
-                startActivity(Intent.createChooser(textIntent, "分享"));
-
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-=======
                 int currentNightMode = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
                 getDelegate().setLocalNightMode(currentNightMode == Configuration.UI_MODE_NIGHT_NO ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO);
 
                 recreate();
->>>>>>> e1bc53472365a48304b66c213d8d9749c3681b6b
             }
         });
 
@@ -144,8 +126,7 @@ public class ItemListActivity extends AppCompatActivity
         mSearchView = (SearchView) findViewById(R.id.searchView);
         mSearchView.setSubmitButtonEnabled(false);
         mSearchView.clearFocus();
-<<<<<<< HEAD
-=======
+
     }
     private void setNightMode(@AppCompatDelegate.NightMode int nightMode) {
         AppCompatDelegate.setDefaultNightMode(nightMode);
@@ -153,10 +134,9 @@ public class ItemListActivity extends AppCompatActivity
             recreate();
         }
     }
->>>>>>> e1bc53472365a48304b66c213d8d9749c3681b6b
 
 
-    }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -185,6 +165,11 @@ public class ItemListActivity extends AppCompatActivity
                         Log.d("func", menuItem.getTitle()+"");
                         Intent intent = new Intent(mDrawerLayout.getContext(), DragTabActivity.class);
                         intent.putStringArrayListExtra("TAB_LIST", tabList);
+                        intent.putStringArrayListExtra("UNUSED_TAB_LIST", unusedTabList);
+                        Toast.makeText(ItemListActivity.this,
+                                "draglist:"+tabList.hashCode(), Toast.LENGTH_SHORT).show();
+                        Log.d("list",tabList.toString());
+                        Log.d("list",unusedTabList.toString());
                         startActivity(intent);
                         Log.d("func", "after activity");
                         switch (menuItem.getItemId()) {
@@ -316,11 +301,20 @@ public class ItemListActivity extends AppCompatActivity
     }
     private void  buildTabList() {
         // ToDo(zps):if there is config file, read it.
-        tabList.add("最新");
+        /*tabList.add("最新");
         tabList.add("国内");
         tabList.add("科技");
         tabList.add("财经");
         tabList.add("娱乐");
         tabList.add("体育");
+
+        unusedTabList.add("军事");
+        unusedTabList.add("汽车");
+        unusedTabList.add("国际");
+        unusedTabList.add("社会");
+        unusedTabList.add("文化");*/
+        Data mAppData = (Data) getApplication();
+        unusedTabList = mAppData.getUnusedTabList();
+        tabList = mAppData.getTabList();
     }
 }
