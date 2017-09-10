@@ -89,6 +89,7 @@ public class ItemListActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setTitle(getTitle());
+
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 
@@ -125,8 +126,9 @@ public class ItemListActivity extends AppCompatActivity
 
         //搜索框
         mSearchView = (SearchView) findViewById(R.id.searchView);
-        mSearchView.setSubmitButtonEnabled(false);
+        mSearchView.setSubmitButtonEnabled(true);
         mSearchView.clearFocus();
+        setupSearchView(mSearchView);
 
     }
     private void setNightMode(@AppCompatDelegate.NightMode int nightMode) {
@@ -164,8 +166,10 @@ public class ItemListActivity extends AppCompatActivity
             @Override
             public boolean onQueryTextSubmit(String query) {
 
-                Intent intent = new Intent(ItemListActivity.this, SearchResultsActivity.class);
+                Log.d("func", "submit text" + query);
+                Intent intent = new Intent(.this, SearchResultsActivity.class);
                 startActivity(intent);
+
                 return false;
             }
 
