@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Adapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -40,7 +41,9 @@ public class ItemListFragment extends Fragment {
     static private int lastOffset = 0;
     static private int lastPosition = 0;
     View recyclerView;
+    SimpleItemRecyclerViewAdapter mAdapter;
     // TODO: Rename and change types of parameters
+
 
 
 
@@ -49,12 +52,19 @@ public class ItemListFragment extends Fragment {
         super.onCreate(savedInstanceState);
         Log.d("func", "oncreate");
 
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.d("func", "oncreate view");
+        Log.d("func", "oncreate view" +getArguments().getString("classTag")
+        );
+        if (recyclerView != null) {
+
+            return recyclerView;
+        }
+        mAdapter = new SimpleItemRecyclerViewAdapter(new NewsList(getArguments().getString("classTag")));
         RecyclerView rv = (RecyclerView) inflater.inflate(
                 R.layout.item_list, container, false);
         setupRecyclerView(rv);
@@ -87,7 +97,7 @@ public class ItemListFragment extends Fragment {
 
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(new NewsList()));
+        recyclerView.setAdapter(mAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext()));
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
 

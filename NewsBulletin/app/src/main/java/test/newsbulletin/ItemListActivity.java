@@ -79,7 +79,6 @@ public class ItemListActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         Log.d("func","main oncreate");
         setContentView(R.layout.main_activity);
-        Log.d("func","main oncreate");
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -142,42 +141,54 @@ public class ItemListActivity extends AppCompatActivity
     @Override
     public void onResume() {
         super.onResume();
+        Log.d("func","resume");
         setupViewPager(viewPager);
     }
     private void setupViewPager(ViewPager viewPager) {
 
         mAdapter adapter = new mAdapter(this.getSupportFragmentManager());
-        /*for (String tab_name: tabList) {
-            adapter.addFragment(new ItemListFragment(), tab_name);
+        for (String tab_name: tabList) {
+            Bundle bundle = new Bundle();
+            ItemListFragment fragment = new ItemListFragment();
+            bundle.putString("classTag",tab_name);
+            fragment.setArguments(bundle);
+            adapter.addFragment(fragment, tab_name);
 
         }
-        */
-        adapter.addFragment(new ItemListFragment(), "最新");
-        adapter.addFragment(new Fragment(), "国内");
-        adapter.addFragment(new Fragment(), "科技");
-        adapter.addFragment(new Fragment(), "财经");
-        adapter.addFragment(new Fragment(), "娱乐");
+
         viewPager.setAdapter(adapter);
     }
 
+    private void setupSearchView(SearchView mSearchView) {
+        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+
+                Intent intent = new Intent(ItemListActivity.this, SearchResultsActivity.class);
+                startActivity(intent);
+                return false;
+            }
+
+            // 当搜索内容改变时触发该方法
+            @Override
+            public boolean onQueryTextChange(String newText) {
+
+                return false;
+            }
+        });
+    }
     private void setupDrawerContent(NavigationView navigationView) {
         navigationView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
                     @Override
-                    public boolean onNavigationItemSelected(MenuItem menuItem) {/*
-                        Log.d("func", menuItem.getTitle()+"");
-                        Intent intent = new Intent(mDrawerLayout.getContext(), DragTabActivity.class);
-                        intent.putStringArrayListExtra("TAB_LIST", tabList);
-                        intent.putStringArrayListExtra("UNUSED_TAB_LIST", unusedTabList);
-                        Toast.makeText(ItemListActivity.this,
-                                "draglist:"+tabList.hashCode(), Toast.LENGTH_SHORT).show();
-                        Log.d("list",tabList.toString());
-                        Log.d("list",unusedTabList.toString());
-                        startActivity(intent);
-                        Log.d("func", "after activity");*/
+                    public boolean onNavigationItemSelected(MenuItem menuItem) {
+
                         switch (menuItem.getItemId()) {
-                            case R.id.nav_discussion:
-                                Log.d("func", "nav_discuss");
+                            case R.id.nav_tag:
+                                Intent intent = new Intent(mDrawerLayout.getContext(), DragTabActivity.class);
+                                startActivity(intent);
+                                Log.d("func", "nav_tag" +
+                                        "");
                             case R.id.nav_friends:
                                 Log.d("func", "discuss_nav");
                             case R.id.nav_messages:

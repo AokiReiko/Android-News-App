@@ -1,6 +1,8 @@
 package test.newsbulletin.model;
+import android.app.Notification;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Message;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -15,6 +17,7 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -29,8 +32,24 @@ public class NewsList {
      */
     private List<NewsListItem> newsList = new ArrayList<NewsListItem>();
     private int pageNumber = 1;
+    private String classTag;
     private static final String traverse_base_url = "http://166.111.68.66:2042/news/action/query/latest";
+    private static final Map<String, Integer> tagMap = new HashMap<String , Integer>(){{
+        put("科技", 1);
+        put("教育", 2);
+        put("军事", 3);
+        put("国内", 4);
+        put("社会", 5);
+        put("文化", 6);
+        put("汽车", 7);
+        put("国际", 8);
+        put("体育", 9);
+        put("财经", 10);
+        put("健康", 11);
+        put("娱乐", 12);
 
+
+    }};
     /**
      * A map of sample (dummy) items, by ID.
      */
@@ -38,11 +57,21 @@ public class NewsList {
 
     private static final int COUNT = 25;
 
-    static String getSpecificPageUrl(int pageNo) {
-        return traverse_base_url + "?pageNo=" + pageNo;
+    static String getSpecificPageUrl(int pageNo, String classTag) {
+        Log.d("func", classTag+classTag.equals("最新")+tagMap.containsKey(classTag));
+        String url = traverse_base_url + "?pageNo=" + pageNo;
+        if (!classTag.equals("最新") && tagMap.containsKey(classTag)) {
+            url += "&category=" + tagMap.get(classTag);
+        }
+        return url;
     }
 
     public NewsList() {
+        loadMore();
+    }
+    public NewsList(String classTag) {
+        Log.d("func", classTag);
+        this.classTag = classTag;
         loadMore();
     }
     public NewsListItem get(int i) {
@@ -61,7 +90,7 @@ public class NewsList {
             public void run()
             {
                 int resCode = -1;
-                String required_url = getSpecificPageUrl(pageNumber);
+                String required_url = getSpecificPageUrl(pageNumber, classTag);
                 try {
                     /* Open the url */
                     URL url = new URL(required_url);
@@ -114,6 +143,7 @@ public class NewsList {
             }
         });
         thread.start();
+
 
         Log.d("func", "http finished");
         // Add some sample items.
