@@ -8,7 +8,8 @@ import java.util.ArrayList;
  */
 
 public class Data extends Application {
-    public boolean if_day = true;
+    public static boolean if_pic = true;
+    public static boolean which_inter = true;
     private ArrayList<String> tabList = new ArrayList<>();
     private ArrayList<String> unusedTabList = new ArrayList<>();
 

@@ -19,13 +19,13 @@
     <item android:title="设置模式">
         <menu>
             <item
-                android:id="@+id/daylight"
-                android:title="白天模式"
+                android:id="@+id/pic_yes"
+                android:title="有图模式"
                 android:checkable="true"
                  />
             <item
-                android:id="@+id/nightlight"
-                android:title="黑夜模式"
+                android:id="@+id/pic_np"
+                android:title="无图模式"
                 android:checkable="true"
                 />
         </menu>

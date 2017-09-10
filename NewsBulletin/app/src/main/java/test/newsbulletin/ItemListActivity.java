@@ -37,6 +37,8 @@ import android.view.ViewGroup;
 import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.widget.TabHost;
 import android.widget.TableLayout;
 import android.widget.TextView;
@@ -44,6 +46,7 @@ import android.app.Application;
 import android.view.MenuItem;
 import android.support.design.widget.NavigationView;
 import android.widget.Toast;
+import android.widget.ImageView;
 
 import test.newsbulletin.dummy.DummyContent;
 import test.newsbulletin.model.Data;
@@ -175,17 +178,26 @@ public class ItemListActivity extends AppCompatActivity
                 new NavigationView.OnNavigationItemSelectedListener() {
                     @Override
                     public boolean onNavigationItemSelected(MenuItem menuItem) {
-
+                        Data mData = (Data) getApplication();
                         switch (menuItem.getItemId()) {
                             case R.id.nav_tag:
                                 Intent intent = new Intent(mDrawerLayout.getContext(), DragTabActivity.class);
                                 startActivity(intent);
-                                Log.d("func", "nav_tag" +
-                                        "");
+                                Log.d("func", "nav_tag" + "");
                             case R.id.nav_friends:
                                 Log.d("func", "discuss_nav");
                             case R.id.nav_messages:
                                 Log.d("func", "message_nav");
+                            case R.id.pic_yes:
+                                mData.if_pic = true;
+                                Log.d("check", String.valueOf(mData.if_pic));
+                                mData.which_inter = true;
+                                break;
+                            case R.id.pic_np:
+                                mData.if_pic = false;
+                                Log.d("check", String.valueOf(mData.if_pic));
+                                mData.which_inter = false;
+                                break;
                         }
                         menuItem.setChecked(true);
                         mDrawerLayout.closeDrawers();

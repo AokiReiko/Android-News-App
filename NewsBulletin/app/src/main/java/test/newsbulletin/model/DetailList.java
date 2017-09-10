@@ -78,9 +78,15 @@ public class DetailList {
                     }
 
                     JSONObject js_obj = new JSONObject(html);
-
-
-                    addItem(new NewsListItem(pageID,js_obj.getString("news_Title"),js_obj.getString("news_Author"),js_obj.getString("news_Content")));
+                    String tmp = js_obj.getString("news_Pictures");
+                    String[] mm = tmp.split("[ ;]");
+                    List<String> picture_url = new ArrayList<String>();
+                    for (int i=0; i<mm.length; i++)
+                    {
+                        Log.d("check",mm[i] );
+                        picture_url.add(mm[i]);
+                    }
+                    addItem(new NewsListItem(pageID,js_obj.getString("news_Title"),js_obj.getString("news_Author"),js_obj.getString("news_Content"),picture_url));
 
 
                 } catch (MalformedURLException eurl){
@@ -118,12 +124,15 @@ public class DetailList {
         public final String Title;
         public final String Author;
         public final String Content;
+        public final List<String> Picture;
 
-        public NewsListItem(String id, String title, String author, String content) {
+        public NewsListItem(String id, String title, String author, String content, List<String> picture) {
             this.id = id;
             this.Title = title;
             this.Author = author;
             this.Content = content;
+            this.Picture = picture;
+
         }
 
         @Override
