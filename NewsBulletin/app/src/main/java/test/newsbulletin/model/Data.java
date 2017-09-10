@@ -3,14 +3,17 @@ import android.app.Application;
 
 import java.util.ArrayList;
 
+import test.newsbulletin.file.FileIO;
+
 /**
  * Created by 32928 on 2017/9/9.
  */
 
 public class Data extends Application {
     public boolean if_day = true;
-    private ArrayList<String> tabList = new ArrayList<>();
-    private ArrayList<String> unusedTabList = new ArrayList<>();
+    // zps: 文件读写操作必须要在activity环境已知的时候才能进行，所以这里只能改成public了
+    public ArrayList<String> tabList = new ArrayList<>();
+    public ArrayList<String> unusedTabList = new ArrayList<>();
 
     public ArrayList<String> getTabList() { return tabList; }
     public ArrayList<String> getUnusedTabList() { return unusedTabList; }
@@ -19,9 +22,9 @@ public class Data extends Application {
     public void onCreate() {
         // TODO Auto-generated method stub
         super.onCreate();
-        buildTabList();
+        // buildTabList();
     }
-    private void  buildTabList() {
+    public void  buildTabList() {
         // ToDo(zps):if there is config file, read it.
         tabList.add("最新");
         tabList.add("国内");
@@ -38,6 +41,7 @@ public class Data extends Application {
         unusedTabList.add("教育");
         unusedTabList.add("健康");
     }
+
 }
 
 
