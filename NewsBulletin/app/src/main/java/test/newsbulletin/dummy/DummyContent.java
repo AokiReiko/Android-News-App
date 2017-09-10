@@ -43,7 +43,9 @@ public class DummyContent {
     public static Map<String, DummyItem> ITEM_MAP = new HashMap<String, DummyItem>();
 
     private static final int COUNT = 25;
-
+    static {
+        loadMore();
+    }
     static String getSpecificPageUrl(int pageNo) {
         return traverse_base_url + "?pageNo=" + pageNo;
     }

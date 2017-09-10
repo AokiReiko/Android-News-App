@@ -32,7 +32,7 @@ public class NewsList {
      */
     private List<NewsListItem> newsList = new ArrayList<NewsListItem>();
     private int pageNumber = 1;
-    private String classTag;
+    private String classTag = "最新";
     private static final String traverse_base_url = "http://166.111.68.66:2042/news/action/query/latest";
     private static final Map<String, Integer> tagMap = new HashMap<String , Integer>(){{
         put("科技", 1);
@@ -89,12 +89,15 @@ public class NewsList {
             @Override
             public void run()
             {
+                Log.d("func","begin thread" +
+                        "");
                 int resCode = -1;
                 String required_url = getSpecificPageUrl(pageNumber, classTag);
+                Log.d("func",required_url);
                 try {
                     /* Open the url */
                     URL url = new URL(required_url);
-                    Log.d("func",required_url);
+
                     HttpURLConnection cnt = (HttpURLConnection)url.openConnection();
                     cnt.setRequestMethod("GET");
                     cnt.setConnectTimeout(5*1000);
