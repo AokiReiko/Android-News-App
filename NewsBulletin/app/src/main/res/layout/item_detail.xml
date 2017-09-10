@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/lineout"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     tools:context="test.newsbulletin.ItemDetailFragment"
@@ -10,17 +11,17 @@
         android:id="@+id/item_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:layout_margin="@dimen/text_margin"
         android:textAppearance="?attr/textAppearanceListItem" />
+
     <TextView
         android:id="@+id/item_author"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:gravity="right"
         android:layout_margin="@dimen/text_margin"
+        android:gravity="right"
+        android:padding="16dp"
         android:textAppearance="?attr/textAppearanceListItem" />
+
     <TextView
         android:id="@+id/item_detail"
         android:layout_width="wrap_content"

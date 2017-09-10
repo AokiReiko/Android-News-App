@@ -130,13 +130,6 @@ public class ItemListActivity extends AppCompatActivity
         mSearchView.clearFocus();
 
     }
-    private void setNightMode(@AppCompatDelegate.NightMode int nightMode) {
-        AppCompatDelegate.setDefaultNightMode(nightMode);
-        if (Build.VERSION.SDK_INT >= 11) {
-            recreate();
-        }
-    }
-
 
 
     @Override
