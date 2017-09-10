@@ -51,10 +51,13 @@ import android.widget.ImageView;
 import test.newsbulletin.dummy.DummyContent;
 import test.newsbulletin.file.FileIO;
 import test.newsbulletin.model.Data;
+import test.newsbulletin.speech.SpeechGenerator;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.iflytek.cloud.SpeechUtility;
 
 /**
  * An activity representing a list of Items. This activity
@@ -78,12 +81,19 @@ public class ItemListActivity extends AppCompatActivity
     private ArrayList<String> tabList = new ArrayList<>();
     private ArrayList<String> unusedTabList = new ArrayList<>();
     Data find_day = new Data();
+    boolean isSpeechEnable = false;
     FileIO io;
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         Log.d("func","main oncreate");
+
+        if(isSpeechEnable) {
+            SpeechUtility.createUtility(this, "appid=" + getString(R.string.app_id));
+            // SpeechGenerator generator = new SpeechGenerator("程序启动了", this);
+            // generator.start();
+        }
 
         io = new FileIO(this);
         Data data = (Data) getApplication();
