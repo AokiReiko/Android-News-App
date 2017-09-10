@@ -126,8 +126,6 @@ public class ItemListActivity extends AppCompatActivity
 
         //搜索框
         mSearchView = (SearchView) findViewById(R.id.searchView);
-        mSearchView.setSubmitButtonEnabled(true);
-        mSearchView.clearFocus();
         setupSearchView(mSearchView);
 
     }
@@ -155,12 +153,15 @@ public class ItemListActivity extends AppCompatActivity
     }
 
     private void setupSearchView(SearchView mSearchView) {
+        mSearchView.setSubmitButtonEnabled(true);
+        mSearchView.clearFocus();
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
 
                 Log.d("func", "submit text" + query);
-                Intent intent = new Intent(.this, SearchResultsActivity.class);
+                Intent intent = new Intent(ItemListActivity.this, SearchResultsActivity.class);
+                intent.putExtra(SearchResultsActivity.QUERY_KEYWORD, query);
                 startActivity(intent);
 
                 return false;
