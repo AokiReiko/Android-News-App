@@ -1,4 +1,4 @@
-package test.newsbulletin.voice;
+package test.newsbulletin.speech;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
@@ -30,13 +30,14 @@ public class SpeechGenerator {
         activity = _activity;
         str = _str;
         mTts = SpeechSynthesizer.createSynthesizer(activity, mTtsInitListener);
-
         // 云端发音人名称列表
+
         Resources res = activity.getResources();
         mCloudVoicersEntries = res.getStringArray(R.array.voicer_cloud_entries);
         mCloudVoicersValue = res.getStringArray(R.array.voicer_cloud_values);
 
         mSharedPreferences = activity.getSharedPreferences(TtsSettings.PREFER_NAME, 0);
+
         mToast = Toast.makeText(activity, "", Toast.LENGTH_SHORT);
 
     }
@@ -48,6 +49,7 @@ public class SpeechGenerator {
         if (code != ErrorCode.SUCCESS)
             return false;
         return true;
+
     }
     public void end()
     {
@@ -87,6 +89,8 @@ public class SpeechGenerator {
     private void setParam(){
         // 清空参数
         mTts.setParameter(SpeechConstant.PARAMS, null);
+
+
         // 根据合成引擎设置相应参数
         if(mEngineType.equals(SpeechConstant.TYPE_CLOUD)) {
             mTts.setParameter(SpeechConstant.ENGINE_TYPE, SpeechConstant.TYPE_CLOUD);
@@ -102,12 +106,10 @@ public class SpeechGenerator {
             mTts.setParameter(SpeechConstant.ENGINE_TYPE, SpeechConstant.TYPE_LOCAL);
             // 设置本地合成发音人 voicer为空，默认通过语记界面指定发音人。
             mTts.setParameter(SpeechConstant.VOICE_NAME, "");
-            /**
-             * TODO 本地合成不设置语速、音调、音量，默认使用语记设置
-             * 开发者如需自定义参数，请参考在线合成参数设置
-             */
+
         }
         //设置播放器音频流类型
+        mTts.setParameter(SpeechConstant.FORCE_LOGIN, "true");
         mTts.setParameter(SpeechConstant.STREAM_TYPE, mSharedPreferences.getString("stream_preference", "3"));
         // 设置播放合成音频打断音乐播放，默认为true
         mTts.setParameter(SpeechConstant.KEY_REQUEST_FOCUS, "true");
@@ -116,6 +118,7 @@ public class SpeechGenerator {
         // 注：AUDIO_FORMAT参数语记需要更新版本才能生效
         mTts.setParameter(SpeechConstant.AUDIO_FORMAT, "wav");
         mTts.setParameter(SpeechConstant.TTS_AUDIO_PATH, Environment.getExternalStorageDirectory()+"/msc/tts.wav");
+
     }
 
     private InitListener mTtsInitListener = new InitListener() {

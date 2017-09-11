@@ -37,6 +37,8 @@ import android.view.ViewGroup;
 import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.widget.TabHost;
 import android.widget.TableLayout;
 import android.widget.TextView;
@@ -44,14 +46,18 @@ import android.app.Application;
 import android.view.MenuItem;
 import android.support.design.widget.NavigationView;
 import android.widget.Toast;
+import android.widget.ImageView;
 
 import test.newsbulletin.dummy.DummyContent;
 import test.newsbulletin.file.FileIO;
 import test.newsbulletin.model.Data;
+import test.newsbulletin.speech.SpeechGenerator;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.iflytek.cloud.SpeechUtility;
 
 /**
  * An activity representing a list of Items. This activity
@@ -75,18 +81,23 @@ public class ItemListActivity extends AppCompatActivity
     private ArrayList<String> tabList = new ArrayList<>();
     private ArrayList<String> unusedTabList = new ArrayList<>();
     Data find_day = new Data();
+    SpeechGenerator generator = null;
     FileIO io;
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         Log.d("func","main oncreate");
+        //generator = new SpeechGenerator("测试语音", this);
+        //generator.start();
+
         io = new FileIO(this);
+        Data data = (Data) getApplication();
         boolean is_loaded = io.loadConfig();
         if(!is_loaded)
         {
             Log.d("func","first time loading config");
-            find_day.buildTabList();
+            data.buildTabList();
         }
         setContentView(R.layout.main_activity);
 
@@ -151,6 +162,8 @@ public class ItemListActivity extends AppCompatActivity
     @Override
     public void onDestroy()
     {
+        if(generator != null)
+            generator.end();
         io.saveConfig();
         Log.d("func", "destroy");
         super.onDestroy();
@@ -199,17 +212,26 @@ public class ItemListActivity extends AppCompatActivity
                 new NavigationView.OnNavigationItemSelectedListener() {
                     @Override
                     public boolean onNavigationItemSelected(MenuItem menuItem) {
-
+                        Data mData = (Data) getApplication();
                         switch (menuItem.getItemId()) {
                             case R.id.nav_tag:
                                 Intent intent = new Intent(mDrawerLayout.getContext(), DragTabActivity.class);
                                 startActivity(intent);
-                                Log.d("func", "nav_tag" +
-                                        "");
+                                Log.d("func", "nav_tag" + "");
                             case R.id.nav_friends:
                                 Log.d("func", "discuss_nav");
                             case R.id.nav_messages:
                                 Log.d("func", "message_nav");
+                            case R.id.pic_yes:
+                                mData.if_pic = true;
+                                Log.d("check", String.valueOf(mData.if_pic));
+                                mData.which_inter = true;
+                                break;
+                            case R.id.pic_np:
+                                mData.if_pic = false;
+                                Log.d("check", String.valueOf(mData.if_pic));
+                                mData.which_inter = false;
+                                break;
                         }
                         menuItem.setChecked(true);
                         mDrawerLayout.closeDrawers();
