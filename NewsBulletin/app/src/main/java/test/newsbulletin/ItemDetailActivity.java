@@ -1,5 +1,6 @@
 package test.newsbulletin;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -11,6 +12,8 @@ import android.support.v7.app.ActionBar;
 import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
 
+import test.newsbulletin.speech.SpeechGenerator;
+
 /**
  * An activity representing a single Item detail screen. This
  * activity is only used narrow width devices. On tablet-size devices,
@@ -19,21 +22,15 @@ import android.view.MenuItem;
  */
 public class ItemDetailActivity extends AppCompatActivity {
 
+    boolean isSpeechActive = false, isSpeechStart = false;
+    SpeechGenerator generator = null;
+    ItemDetailFragment fragment = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_detail);
         Toolbar toolbar = (Toolbar) findViewById(R.id.detail_toolbar);
         setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own detail action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
         // Show the Up button in the action bar.
         ActionBar actionBar = getSupportActionBar();
@@ -50,18 +47,54 @@ public class ItemDetailActivity extends AppCompatActivity {
         //
         // http://developer.android.com/guide/components/fragments.html
         //
+
         if (savedInstanceState == null) {
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.
             Bundle arguments = new Bundle();
             arguments.putString(ItemDetailFragment.ARG_ITEM_ID,
                     getIntent().getStringExtra(ItemDetailFragment.ARG_ITEM_ID));
-            ItemDetailFragment fragment = new ItemDetailFragment();
+            fragment = new ItemDetailFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.item_detail_container, fragment)
                     .commit();
         }
+
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        final Activity this_activity = this;
+
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(!isSpeechActive)
+                {
+                    isSpeechActive = isSpeechStart = true;
+                    String str_read = fragment.mList.newsList.Title + "。作者：" + fragment.mList.newsList.Author + "。" + fragment.mList.newsList.Content;
+                    generator = new SpeechGenerator(str_read, this_activity);
+                    generator.start();
+                }
+                else if(!isSpeechStart)
+                {
+                    isSpeechStart = true;
+                    generator.resume();
+                }
+                else
+                {
+                    isSpeechStart = false;
+                    generator.pause();
+                }
+            }
+        });
+
+    }
+    @Override
+    public void onDestroy()
+    {
+        if(generator != null)
+            generator.end();
+        super.onDestroy();
     }
 
     @Override

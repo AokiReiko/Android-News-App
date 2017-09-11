@@ -81,19 +81,15 @@ public class ItemListActivity extends AppCompatActivity
     private ArrayList<String> tabList = new ArrayList<>();
     private ArrayList<String> unusedTabList = new ArrayList<>();
     Data find_day = new Data();
-    boolean isSpeechEnable = false;
+    SpeechGenerator generator = null;
     FileIO io;
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         Log.d("func","main oncreate");
-
-        if(isSpeechEnable) {
-            SpeechUtility.createUtility(this, "appid=" + getString(R.string.app_id));
-            // SpeechGenerator generator = new SpeechGenerator("程序启动了", this);
-            // generator.start();
-        }
+        //generator = new SpeechGenerator("测试语音", this);
+        //generator.start();
 
         io = new FileIO(this);
         Data data = (Data) getApplication();
@@ -166,6 +162,8 @@ public class ItemListActivity extends AppCompatActivity
     @Override
     public void onDestroy()
     {
+        if(generator != null)
+            generator.end();
         io.saveConfig();
         Log.d("func", "destroy");
         super.onDestroy();

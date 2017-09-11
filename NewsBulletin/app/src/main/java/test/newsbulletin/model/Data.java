@@ -1,8 +1,11 @@
 package test.newsbulletin.model;
 import android.app.Application;
 
+import com.iflytek.cloud.SpeechUtility;
+
 import java.util.ArrayList;
 
+import test.newsbulletin.R;
 import test.newsbulletin.file.FileIO;
 
 /**
@@ -21,10 +24,15 @@ public class Data extends Application {
     public ArrayList<String> getTabList() { return tabList; }
     public ArrayList<String> getUnusedTabList() { return unusedTabList; }
 
+    boolean isSpeechEnable = true;
+
     @Override
     public void onCreate() {
         // TODO Auto-generated method stub
         super.onCreate();
+        if(isSpeechEnable) {
+            SpeechUtility.createUtility(this, "appid=" + getString(R.string.app_id));
+        }
         // buildTabList();
     }
     public void  buildTabList() {

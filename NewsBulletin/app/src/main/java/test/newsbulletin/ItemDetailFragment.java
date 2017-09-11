@@ -3,6 +3,7 @@ package test.newsbulletin;
 import android.app.Activity;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -21,6 +22,7 @@ import android.os.Message;
 import android.app.Application;
 import test.newsbulletin.model.Data;
 import test.newsbulletin.model.DetailList;
+import test.newsbulletin.speech.SpeechGenerator;
 
 import android.util.Log;
 /**
@@ -39,7 +41,7 @@ public class ItemDetailFragment extends Fragment {
     /**
      * The dummy content this fragment is presenting. */
     ImageView imageview;
-    private DetailList mList;
+    public DetailList mList;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -84,6 +86,7 @@ public class ItemDetailFragment extends Fragment {
                 appBarLayout.setTitle("分类");
             }
         }
+
     }
 
     @Override
@@ -114,4 +117,9 @@ public class ItemDetailFragment extends Fragment {
         return rootView;
     }
 
+    @Override
+    public void onDestroyView()
+    {
+        super.onDestroyView();
+    }
 }
