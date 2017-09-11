@@ -10,6 +10,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -119,7 +120,7 @@ public class DetailList {
         newsMap.put(item.id, item);
     }
 
-    public static class NewsListItem {
+    public static class NewsListItem implements Serializable{
         public final String id;
         public final String Title;
         public final String Author;

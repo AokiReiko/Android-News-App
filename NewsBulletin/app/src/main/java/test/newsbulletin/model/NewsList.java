@@ -14,6 +14,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -30,9 +31,9 @@ public class NewsList {
     /**
      * An array of news items and their initialization.
      */
-    private List<NewsListItem> newsList = new ArrayList<NewsListItem>();
+    public List<NewsListItem> newsList = new ArrayList<NewsListItem>();
     private int pageNumber = 1;
-    private String classTag = "最新";
+    public String classTag = "最新";
     private static final String traverse_base_url = "http://166.111.68.66:2042/news/action/query/latest";
     private static final Map<String, Integer> tagMap = new HashMap<String , Integer>(){{
         put("科技", 1);
@@ -183,7 +184,7 @@ public class NewsList {
     /**
      * A dummy item representing a piece of content.
      */
-    public static class NewsListItem {
+    public static class NewsListItem implements Serializable{
         public final String id;
         public final String content;
         public final String news_id;
@@ -198,7 +199,7 @@ public class NewsList {
         }
 
         @Override
-        public String toString() {
+         public String toString() {
             return content;
         }
         public void markRead() {
