@@ -128,7 +128,9 @@ public class NewsList {
                         addItem(new NewsListItem(String.valueOf(newsList.size()),obj.getString("news_Title"),obj.getString("news_ID"), obj.getString("news_Pictures")));
                     }
 
-                    pageNumber += 1;
+                    if (news_list.length() != 0) {
+                        pageNumber += 1;
+                    }
 
                 } catch (MalformedURLException eurl){
                     Log.d("func","url error");

@@ -22,7 +22,7 @@ public class Data extends Application {
     public void onCreate() {
         // TODO Auto-generated method stub
         super.onCreate();
-        // buildTabList();
+        buildTabList();
     }
     public void  buildTabList() {
         // ToDo(zps):if there is config file, read it.

@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -20,17 +22,21 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.List;
+import java.util.logging.LogRecord;
 
 import test.newsbulletin.dummy.DummyContent;
 import test.newsbulletin.model.NewsList;
+import test.newsbulletin.model.SearchResults;
 
 public class SearchResultsActivity extends AppCompatActivity {
 
 
+    //只有从主页跳转过来的时候set一次，然后将这个传入SearchResults，再次在搜索页面搜索时不用此变量。
     public static final String QUERY_KEYWORD = "";
     static private int lastOffset = 0;
     static private int lastPosition = 0;
     View recyclerView;
+    Handler mHandler;
     SearchResultsActivity.SimpleItemRecyclerViewAdapter mAdapter;
 
     @Override
@@ -44,8 +50,12 @@ public class SearchResultsActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        mAdapter = new SearchResultsActivity.SimpleItemRecyclerViewAdapter(new NewsList());
-        View recyclerView = findViewById(R.id.item_list);
+        setupHandler();
+
+        mAdapter = new SearchResultsActivity.SimpleItemRecyclerViewAdapter(new SearchResults(SearchContent));
+        mAdapter.loadMore();
+
+        recyclerView = findViewById(R.id.item_list);
         assert recyclerView != null;
         setupRecyclerView((RecyclerView) recyclerView);
 
@@ -59,6 +69,13 @@ public class SearchResultsActivity extends AppCompatActivity {
                 Log.d("func", "submit text" + query);
 
                 mSearchView.setIconified(true);
+
+                mAdapter.set(query);
+                mAdapter.clear();
+                mAdapter.notifyDataSetChanged();
+                mAdapter.loadMore();
+
+                Log.d("func","text listener: "+((RecyclerView) recyclerView).getAdapter().toString());
 
                 return false;
             }
@@ -86,6 +103,20 @@ public class SearchResultsActivity extends AppCompatActivity {
             String query = intent.getStringExtra(SearchManager.QUERY);
             //use the query to search your data somehow
         }
+    }
+
+    private void setupHandler() {
+         mHandler = new Handler(){
+            @Override
+            public void handleMessage(Message msg) {
+                switch (msg.what){
+                    case 1:
+                        mAdapter.notifyDataSetChanged();
+                        break;
+                    default:;
+                }
+            }
+        };
     }
     private void setupSearchView(SearchView mSearchView) {
 
@@ -117,15 +148,19 @@ public class SearchResultsActivity extends AppCompatActivity {
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                 Log.d("func","scroll state changed");
-                /*if (lastItem == recyclerView.getAdapter().getItemCount() - 1 && newState == RecyclerView.SCROLL_STATE_IDLE ) {
+                if (lastItem == recyclerView.getAdapter().getItemCount() - 1 && newState == RecyclerView.SCROLL_STATE_IDLE ) {
                     isLoad = true;
                     ((SearchResultsActivity.SimpleItemRecyclerViewAdapter)recyclerView.getAdapter()).loadMore();
                 }
                 // To update the pre-layout list.
+                Log.d("search", "1:"+recyclerView);
                 recyclerView.getAdapter().notifyDataSetChanged();
+                Log.d("search", " 2:"+recyclerView);
                 if(recyclerView.getLayoutManager() != null) {
+                    Log.d("search", "3 " +
+                            ":"+recyclerView);
                     getPositionAndOffset();
-                }*/
+                }
 
             }
         });
@@ -137,8 +172,10 @@ public class SearchResultsActivity extends AppCompatActivity {
         }
     }
     private void getPositionAndOffset() {
+        Log.d("search","get posi and off "+recyclerView);
         LinearLayoutManager layoutManager = (LinearLayoutManager) ((RecyclerView) recyclerView).getLayoutManager();
         //获取可视的第一个view
+        Log.d("search", "get layout");
         int topIndex = layoutManager.findFirstVisibleItemPosition();
         View topView = layoutManager.findViewByPosition(topIndex);
         if (topView != null) {
@@ -151,13 +188,33 @@ public class SearchResultsActivity extends AppCompatActivity {
     public class SimpleItemRecyclerViewAdapter
             extends RecyclerView.Adapter<SearchResultsActivity.SimpleItemRecyclerViewAdapter.ViewHolder> {
 
-        private final NewsList mnewsList;
+        private final SearchResults msearchResults;
 
-        public SimpleItemRecyclerViewAdapter(NewsList newsList) {
-            mnewsList = newsList;
+        public SimpleItemRecyclerViewAdapter(SearchResults results) {
+            //搜索跳转的时候搜索一次
+            msearchResults = results;
+            loadMore();
         }
+        public void set(String key) { msearchResults.setKeyWord(key); }
 
-        public void loadMore() { mnewsList.loadMore(); }
+        public void clear() { msearchResults.clear(); }
+
+        public void loadMore() {
+            // This is the caller for the url connection. New thread:
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    if (msearchResults.search() == true)
+                    {
+                        Message msg = new Message();
+                        msg.what = 1;
+                        mHandler.sendMessage(msg);
+                    }
+
+                }
+            });
+            thread.start();
+        }
 
         @Override
         public SearchResultsActivity.SimpleItemRecyclerViewAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -168,11 +225,11 @@ public class SearchResultsActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(final SearchResultsActivity.SimpleItemRecyclerViewAdapter.ViewHolder holder, int position) {
-            holder.mItem = mnewsList.get(position);
+            holder.mItem = msearchResults.get(position);
 
             //holder.mIdView.setText(mnewsList.get(position).id);
             holder.mImageView.setImageResource(R.drawable.ic_launcher);
-            holder.mContentView.setText(mnewsList.get(position).content);
+            holder.mContentView.setText(msearchResults.get(position).content);
             Log.d("func", holder.toString()+"-"+position + "-" + holder.mContentView.getText());
             holder.mView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -189,7 +246,7 @@ public class SearchResultsActivity extends AppCompatActivity {
 
         @Override
         public int getItemCount() {
-            return mnewsList.size();
+            return msearchResults.size();
         }
 
         public class ViewHolder extends RecyclerView.ViewHolder {
@@ -197,7 +254,7 @@ public class SearchResultsActivity extends AppCompatActivity {
             //public final TextView mIdView;
             public final TextView mContentView;
             public final ImageView mImageView;
-            public NewsList.NewsListItem mItem;
+            public SearchResults.SearchResultItem mItem;
 
             public ViewHolder(View view) {
                 super(view);
