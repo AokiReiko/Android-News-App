@@ -45,11 +45,12 @@ public class DragTabActivity extends Activity {
         Log.d("list",dragList.toString());
         Toast.makeText(DragTabActivity.this,
                 dragList.toString(), Toast.LENGTH_SHORT).show();
+        Log.v("checkit", String.valueOf(dragList.size()));
 
         final List<String> unsignedList;
         //unsignedList = getIntent().getStringArrayListExtra("UNUSED_TAB_LIST");
         unsignedList = mAppData.getUnusedTabList();
-        Log.d("list",unsignedList.toString());
+        Log.v("checkit", String.valueOf(unsignedList.size()));
 
 
         mDragView = (DragRecyclerView) findViewById(R.id.dragView);
@@ -75,6 +76,7 @@ public class DragTabActivity extends Activity {
                                 "position" + position + "has been removed", Toast.LENGTH_SHORT).show();
                         mUnsignedView.addItem(removedItem);
                         unsignedList.add(dragList.get(position));
+                        Log.d("checkit",dragList.get(position));
 
                         dragList.remove(position);
                         Toast.makeText(DragTabActivity.this,

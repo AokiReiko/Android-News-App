@@ -21,12 +21,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+
 import java.util.List;
 import java.util.logging.LogRecord;
 
 import test.newsbulletin.dummy.DummyContent;
 import test.newsbulletin.model.NewsList;
 import test.newsbulletin.model.SearchResults;
+
+import static java.security.AccessController.getContext;
 
 public class SearchResultsActivity extends AppCompatActivity {
 
@@ -228,7 +232,11 @@ public class SearchResultsActivity extends AppCompatActivity {
             holder.mItem = msearchResults.get(position);
 
             //holder.mIdView.setText(mnewsList.get(position).id);
-            holder.mImageView.setImageResource(R.drawable.ic_launcher);
+            if(!holder.mItem.picture_id.isEmpty())
+            {
+                Glide.with(getApplicationContext()).load(holder.mItem.picture_id.get(0)).placeholder(R.drawable.ic_launcher).into(holder.mImageView);
+            }
+            else holder.mImageView.setImageResource(R.drawable.ic_launcher);
             holder.mContentView.setText(msearchResults.get(position).content);
             Log.d("func", holder.toString()+"-"+position + "-" + holder.mContentView.getText());
             holder.mView.setOnClickListener(new View.OnClickListener() {

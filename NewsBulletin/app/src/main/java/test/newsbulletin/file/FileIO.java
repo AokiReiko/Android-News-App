@@ -13,6 +13,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import test.newsbulletin.model.Data;
 import test.newsbulletin.model.DetailList;
@@ -38,13 +39,15 @@ public class FileIO
             dir.mkdir();
         }
         String filename = "Config/main.config";
+        byte[] bytes = null;
         try {
-            FileOutputStream file_out = new FileOutputStream(filename);
-            ObjectOutputStream object_out = new ObjectOutputStream(file_out);
+            ByteArrayOutputStream byte_out = new ByteArrayOutputStream();
+            ObjectOutputStream object_out = new ObjectOutputStream(byte_out);
             Data data = (Data) activity.getApplication();
             object_out.writeObject(data.tabList);
             object_out.writeObject(data.unusedTabList);
-            file_out.close();
+            bytes = byte_out.toByteArray();
+            byte_out.close();
             object_out.close();
         }
         catch(Exception e)
@@ -52,17 +55,18 @@ public class FileIO
             Log.d("func", "config save failed");
             return;
         }
+        writeFile(bytes, filename);
         Log.d("func", "config save finished");
     }
     public boolean loadConfig() // 读取配置文件
     {
         String filename = "Config/main.config";
-
+        byte[] bytes = readFile(filename);
         Object object_1, object_2;
         Data data;
         try {
-            FileInputStream file_in = new FileInputStream(filename);
-            ObjectInputStream object_in = new ObjectInputStream(file_in);
+            ByteArrayInputStream byte_in = new ByteArrayInputStream(bytes);
+            ObjectInputStream object_in = new ObjectInputStream(byte_in);
             data = (Data) activity.getApplication();
             object_1 = (Object) object_in.readObject();
             object_2 = (Object) object_in.readObject();
@@ -81,17 +85,20 @@ public class FileIO
     public void saveDetail(DetailList list) // 收藏新闻时调用
     {
         File path = activity.getFilesDir();
-        File dir = new File(path, "Details");
+        File dir = new File(path, "Detail");
         if(!dir.isDirectory())
             dir.mkdir();
 
         String id = list.pageID;
-        String filename = "Detail/" + id;
+        String filename = "Detail/" + id + ".detail";
+        byte[] bytes = null;
         try {
-            FileOutputStream file_out = new FileOutputStream(filename);
-            ObjectOutputStream object_out = new ObjectOutputStream(file_out);
+
+            ByteArrayOutputStream byte_out = new ByteArrayOutputStream();
+            ObjectOutputStream object_out = new ObjectOutputStream(byte_out);
             object_out.writeObject(list.newsList);
-            file_out.close();
+            bytes = byte_out.toByteArray();
+            byte_out.close();
             object_out.close();
         }
         catch(Exception e)
@@ -99,6 +106,7 @@ public class FileIO
             Log.d("func", "detail save failed");
             return;
         }
+        writeFile(bytes, filename);
         Log.d("func", "detail save finished");
     }
 
@@ -106,7 +114,7 @@ public class FileIO
     {
         String id = list.pageID;
         File path = activity.getFilesDir();
-        File dir = new File(path, "Details/" + id);
+        File dir = new File(path, "Details/");
         if(dir.isFile())
             dir.delete();
     }
@@ -114,20 +122,18 @@ public class FileIO
     public boolean loadDetail(DetailList list) // 当某条收藏新闻被加载时调用（离线时调用）
     {
         String id = list.pageID;
-        String filename = "Detail/" + id;
-
-        Object object;
+        String filename = "Detail/" + id + ".detail";
+        byte[] bytes = readFile(filename);
         try {
-            FileInputStream file_in = new FileInputStream(filename);
-            ObjectInputStream object_in = new ObjectInputStream(file_in);
-            object = (Object) object_in.readObject();
+            ByteArrayInputStream byte_in = new ByteArrayInputStream(bytes);
+            ObjectInputStream object_in = new ObjectInputStream(byte_in);
+            list.newsList = (DetailList.NewsListItem) object_in.readObject();
         }
         catch(Exception e)
         {
             Log.d("func", "detail load failed");
             return false;
         }
-        list.newsList = (DetailList.NewsListItem)object;
         return true;
     }
     public void saveNewsList(NewsList list) // 存储新闻列表
@@ -137,12 +143,14 @@ public class FileIO
         if(!dir.isDirectory())
             dir.mkdir();
 
-        String filename = "NewsList" + list.classTag;
+        String filename = "NewsList/" + list.classTag;
+        byte[] bytes = null;
         try {
-            FileOutputStream file_out = new FileOutputStream(filename);
-            ObjectOutputStream object_out = new ObjectOutputStream(file_out);
+            ByteArrayOutputStream byte_out = new ByteArrayOutputStream();
+            ObjectOutputStream object_out = new ObjectOutputStream(byte_out);
             object_out.writeObject(list.newsList);
-            file_out.close();
+            bytes = byte_out.toByteArray();
+            byte_out.close();
             object_out.close();
         }
         catch(Exception e)
@@ -150,19 +158,18 @@ public class FileIO
             Log.d("func", "newslist save failed");
             return;
         }
+        writeFile(bytes, filename);
         Log.d("func", "newslist save finished");
     }
-    public boolean loadNewsList(NewsList list) // 需要设置好classTag, 之后读取该类别的新闻列表（离线时调用，若classTag为收藏则一定调用）
+    public boolean loadNewsList(NewsList list) // 需要设置好classTag, 之后读取该类别的新闻列表（离线时调用）
     {
         String catagory = list.classTag;
         String filename = "NewsList/" + catagory;
-        if(catagory == "收藏")
-            getSavedNewsList(list);
-
+        byte[] bytes = readFile(filename);
         Object object;
         try {
-            FileInputStream file_in = new FileInputStream(filename);
-            ObjectInputStream object_in = new ObjectInputStream(file_in);
+            ByteArrayInputStream byte_in = new ByteArrayInputStream(bytes);
+            ObjectInputStream object_in = new ObjectInputStream(byte_in);
             object = (Object) object_in.readObject();
         }
         catch(Exception e)
@@ -171,21 +178,31 @@ public class FileIO
             return false;
         }
         list.newsList = (List<NewsList.NewsListItem>)object;
+        Log.d("func", "newslist load finished");
         return true;
     }
-    private void getSavedNewsList(NewsList list) // 类别标签为"收藏"，获得已收藏新闻列表
+    public void getSavedNewsList(NewsList list) // 获得已收藏新闻列表
     {
         File path = activity.getFilesDir();
         File dir = new File(path, "Details");
         int num = 0;
+        list.newsList.clear();
+        list.newsMap.clear();
         for(File file : dir.listFiles())
         {
             String id = file.getName();
             Log.d("func", "saved detail: " + id);
             DetailList detail = new DetailList(id);
+            loadDetail(detail);
             // detail 转 NewsList.NewsListItem
-            // String id = String.valueOf(num);
-
+            String str_num = String.valueOf(num);
+            String title = detail.newsList.Title;
+            String news_id = id;
+            String url = detail.newsList.Picture.get(0);
+            //TODO:暂时这么写？
+            NewsList.NewsListItem item = new NewsList.NewsListItem(str_num, title, news_id, detail.newsList.Picture);
+            list.newsList.add(item);
+            list.newsMap.put(item.id, item);
             num++;
         }
     }

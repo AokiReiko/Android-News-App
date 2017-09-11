@@ -5,7 +5,7 @@ import android.util.Log;
 import com.iflytek.cloud.SpeechUtility;
 
 import java.util.ArrayList;
-
+import android.util.Log;
 import test.newsbulletin.R;
 import test.newsbulletin.file.FileIO;
 
@@ -32,6 +32,7 @@ public class Data extends Application {
         // TODO Auto-generated method stub
         super.onCreate();
         buildTabList();
+        Log.v("checkit",unusedTabList.toString());
         if(isSpeechEnable) {
             SpeechUtility.createUtility(this, "appid=" + getString(R.string.app_id));
         }

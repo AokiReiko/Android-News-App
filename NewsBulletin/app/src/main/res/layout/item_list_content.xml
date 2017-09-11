@@ -3,13 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_height="wrap_content"
     android:layout_width="match_parent"
-    android:layout_marginBottom="2dp"
+    android:layout_marginBottom="6dp"
     android:layout_marginEnd="8dp"
     android:layout_marginStart="8dp"
-    android:layout_marginTop="2dp"
+    android:layout_marginTop="6dp"
     android:clickable="true"
     app:cardBackgroundColor="@color/cardview_shadow_end_color"
-    app:cardCornerRadius="2dp"
+    app:cardCornerRadius="4dp"
     app:cardElevation="2dp"
     app:contentPadding="8dp"
     >
@@ -21,9 +21,9 @@
 
         <ImageView
             android:id="@+id/avatar"
-            android:layout_width="@dimen/list_item_avatar_size"
-            android:layout_height="@dimen/list_item_avatar_size"
-            android:layout_marginRight="16dp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginRight="8dp"
             android:textColor="@color/Text_Color"
             android:textAppearance="?attr/textAppearanceListItem" />
 

@@ -22,9 +22,12 @@ import android.widget.TextView;
 import android.support.v7.widget.RecyclerView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+
 import java.util.List;
 
 import test.newsbulletin.dummy.DummyContent;
+import test.newsbulletin.file.FileIO;
 import test.newsbulletin.model.NewsList;
 
 
@@ -33,7 +36,7 @@ import test.newsbulletin.model.NewsList;
  * Activities that contain this fragment must implement the
  * {@link ItemListFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link ItemListFragment#newInstance} factory method to
+ * Use the  factory method to
  * create an instance of this fragment.
  */
 public class ItemListFragment extends Fragment {
@@ -58,8 +61,7 @@ public class ItemListFragment extends Fragment {
     View recyclerView;
     SimpleItemRecyclerViewAdapter mAdapter;
     // TODO: Rename and change types of parameters
-
-
+    FileIO io;
 
 
     @Override
@@ -84,9 +86,11 @@ public class ItemListFragment extends Fragment {
 
             return recyclerView;
         }
-
         mAdapter.loadMore();
 
+        io = new FileIO(getActivity());
+        // io.saveNewsList(newsList); // test pass
+        // io.loadNewsList(newsList); // test pass
         RecyclerView rv = (RecyclerView) inflater.inflate(
                 R.layout.item_list, container, false);
         setupRecyclerView(rv);
@@ -187,6 +191,7 @@ public class ItemListFragment extends Fragment {
             thread.start();
         }
 
+
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(parent.getContext())
@@ -198,7 +203,11 @@ public class ItemListFragment extends Fragment {
         public void onBindViewHolder(final ViewHolder holder, int position) {
             holder.mItem = mnewsList.get(position);
             //holder.mIdView.setText(mnewsList.get(position).id);
-            holder.mImageView.setImageResource(R.drawable.ic_launcher);
+            if(!holder.mItem.picture_id.isEmpty())
+            {
+                Glide.with(getContext()).load(holder.mItem.picture_id.get(0)).placeholder(R.drawable.ic_launcher).into(holder.mImageView);
+            }
+            else holder.mImageView.setImageResource(R.drawable.ic_launcher);
             holder.mContentView.setText(mnewsList.get(position).content);
             //Log.d("func", holder.toString()+"-"+position + "-" + holder.mContentView.getText());
             holder.mView.setOnClickListener(new View.OnClickListener() {

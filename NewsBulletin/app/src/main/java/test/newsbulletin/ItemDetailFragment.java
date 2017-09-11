@@ -20,6 +20,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.app.Application;
+
+import test.newsbulletin.file.FileIO;
 import test.newsbulletin.model.Data;
 import test.newsbulletin.model.DetailList;
 import test.newsbulletin.speech.SpeechGenerator;
@@ -43,6 +45,8 @@ public class ItemDetailFragment extends Fragment {
     ImageView imageview;
     public DetailList mList;
 
+    FileIO io;
+
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -64,6 +68,9 @@ public class ItemDetailFragment extends Fragment {
             // to load content from a content provider.
 
             mList  = new DetailList(getArguments().getString(ARG_ITEM_ID));
+            io = new FileIO(getActivity());
+            // io.saveDetail(mList); // test pass
+            // io.loadDetail(mList); // test pass
             Thread thread=new Thread(new Runnable(){
                 @Override
                 public void run() {

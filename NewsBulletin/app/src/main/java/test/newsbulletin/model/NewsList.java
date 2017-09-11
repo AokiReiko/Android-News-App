@@ -14,6 +14,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -82,13 +83,14 @@ public class NewsList {
     public synchronized boolean loadMore(){
         /* Not do this in our main thread. */
         Log.d("func", "loading page " + pageNumber + ". " + "Size: " + newsList.size());
+        Log.d("func","begin thread");
         Log.d("func","begin thread" +
                 "");
         int resCode = -1;
         String required_url = getSpecificPageUrl(pageNumber, classTag);
         Log.d("func",required_url);
         try {
-            /* Open the url */
+                    /* Open the url */
             URL url = new URL(required_url);
 
             HttpURLConnection cnt = (HttpURLConnection)url.openConnection();
@@ -98,7 +100,7 @@ public class NewsList {
             InputStream in = cnt.getInputStream();
             BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 
-            /* Get all the content of the html */
+                    /* Get all the content of the html */
             String html = "";
             {
                 String line;
@@ -111,14 +113,24 @@ public class NewsList {
             resCode = cnt.getResponseCode();
 
             if (resCode == HttpURLConnection.HTTP_OK) {
-                Log.d("func","" + resCode + classTag);
+                Log.d("func","" + resCode);
             }
 
             JSONObject js_obj = new JSONObject(html);
             JSONArray news_list = js_obj.getJSONArray("list");
+            Log.v("!!!", String.valueOf(news_list.length()));
             for (int i = 0; i < news_list.length(); i++) {
                 JSONObject obj = news_list.getJSONObject(i);
-                addItem(new NewsListItem(String.valueOf(newsList.size()),obj.getString("news_Title"),obj.getString("news_ID"), obj.getString("news_Pictures")));
+                String tmp = obj.getString("news_Pictures");
+                String[] mm = tmp.split("[ ;]");
+                List<String> picture_url = new ArrayList<String>();
+                for (int j=0; j<mm.length; j++)
+                {
+                    Log.d("check",mm[j] );
+                    picture_url.add(mm[j]);
+                }
+                Log.d("check","????" );
+                addItem(new NewsListItem(String.valueOf(newsList.size()),obj.getString("news_Title"),obj.getString("news_ID"),picture_url));
             }
 
             if (news_list.length() != 0) {
@@ -143,10 +155,7 @@ public class NewsList {
             Log.d("func", eso.getMessage());
             return false;
         }
-
         // Add some sample items.
-
-
     }
     private void addItem(NewsListItem item) {
         newsList.add(item);
@@ -166,48 +175,26 @@ public class NewsList {
     /**
      * A dummy item representing a piece of content.
      */
-    public static class NewsListItem {
+    public static class NewsListItem implements Serializable{
         public final String id;
         public final String content;
         public final String news_id;
-        public final Bitmap news_picture;
+        public final List<String> picture_id;
         public boolean isRead = false;
 
-        public NewsListItem(String id, String content, String news_id, String url) {
+        public NewsListItem(String id, String content, String news_id,List<String> pic) {
             this.id = id;
             this.content = content;
             this.news_id = news_id;
-            news_picture = null;//getHttpBitmap(url);
+            this.picture_id = pic;
         }
 
         @Override
-        public String toString() {
+         public String toString() {
             return content;
         }
         public void markRead() {
             isRead = true;
-        }
-        public static Bitmap getHttpBitmap(String url) {
-            URL myFileUrl = null;
-            Bitmap bitmap = null;
-            try {
-                Log.d("func", url);
-                myFileUrl = new URL(url);
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            }
-            try {
-                HttpURLConnection conn = (HttpURLConnection) myFileUrl.openConnection();
-                conn.setConnectTimeout(0);
-                conn.setDoInput(true);
-                conn.connect();
-                InputStream is = conn.getInputStream();
-                bitmap = BitmapFactory.decodeStream(is);
-                is.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return bitmap;
         }
 
     }
