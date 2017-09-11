@@ -123,9 +123,19 @@ public class NewsList {
 
                     JSONObject js_obj = new JSONObject(html);
                     JSONArray news_list = js_obj.getJSONArray("list");
+                    Log.v("!!!", String.valueOf(news_list.length()));
                     for (int i = 0; i < news_list.length(); i++) {
                         JSONObject obj = news_list.getJSONObject(i);
-                        addItem(new NewsListItem(String.valueOf(newsList.size()),obj.getString("news_Title"),obj.getString("news_ID"), obj.getString("news_Pictures")));
+                        String tmp = obj.getString("news_Pictures");
+                        String[] mm = tmp.split("[ ;]");
+                        List<String> picture_url = new ArrayList<String>();
+                        for (int j=0; j<mm.length; j++)
+                        {
+                            Log.d("check",mm[j] );
+                            picture_url.add(mm[j]);
+                        }
+                        Log.d("check","????" );
+                        addItem(new NewsListItem(String.valueOf(newsList.size()),obj.getString("news_Title"),obj.getString("news_ID"),picture_url));
                     }
 
                     if (news_list.length() != 0) {
@@ -177,14 +187,14 @@ public class NewsList {
         public final String id;
         public final String content;
         public final String news_id;
-        public final Bitmap news_picture;
+        public final List<String> picture_id;
         public boolean isRead = false;
 
-        public NewsListItem(String id, String content, String news_id, String url) {
+        public NewsListItem(String id, String content, String news_id,List<String> pic) {
             this.id = id;
             this.content = content;
             this.news_id = news_id;
-            news_picture = null;//getHttpBitmap(url);
+            this.picture_id = pic;
         }
 
         @Override
@@ -193,28 +203,6 @@ public class NewsList {
         }
         public void markRead() {
             isRead = true;
-        }
-        public static Bitmap getHttpBitmap(String url) {
-            URL myFileUrl = null;
-            Bitmap bitmap = null;
-            try {
-                Log.d("func", url);
-                myFileUrl = new URL(url);
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            }
-            try {
-                HttpURLConnection conn = (HttpURLConnection) myFileUrl.openConnection();
-                conn.setConnectTimeout(0);
-                conn.setDoInput(true);
-                conn.connect();
-                InputStream is = conn.getInputStream();
-                bitmap = BitmapFactory.decodeStream(is);
-                is.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return bitmap;
         }
 
     }

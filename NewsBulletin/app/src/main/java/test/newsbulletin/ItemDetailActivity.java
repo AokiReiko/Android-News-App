@@ -11,7 +11,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
-
+import android.view.Menu;
+import android.widget.Toast;
 import test.newsbulletin.speech.SpeechGenerator;
 
 /**
@@ -28,10 +29,10 @@ public class ItemDetailActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_item_detail);
         Toolbar toolbar = (Toolbar) findViewById(R.id.detail_toolbar);
         setSupportActionBar(toolbar);
-
         // Show the Up button in the action bar.
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -87,8 +88,18 @@ public class ItemDetailActivity extends AppCompatActivity {
                 }
             }
         });
+        toolbar.setOnMenuItemClickListener(onMenuItemClick);
 
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        return true;
+    }
+
     @Override
     public void onDestroy()
     {
@@ -96,7 +107,20 @@ public class ItemDetailActivity extends AppCompatActivity {
             generator.end();
         super.onDestroy();
     }
+    private Toolbar.OnMenuItemClickListener onMenuItemClick = new Toolbar.OnMenuItemClickListener() {
+    @Override
+  public boolean onMenuItemClick(MenuItem menuItem) {
+    String msg = "";
+    switch (menuItem.getItemId()) {
 
+      case R.id.action_share:
+        msg += "Click share";
+        break;
+
+    }
+    return true;
+  }
+    };
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();

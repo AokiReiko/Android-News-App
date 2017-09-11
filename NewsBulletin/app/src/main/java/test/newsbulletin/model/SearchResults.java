@@ -16,6 +16,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by aokireiko on 9/10/17.
@@ -67,9 +68,19 @@ public class SearchResults {
 
             JSONObject js_obj = new JSONObject(html);
             JSONArray news_list = js_obj.getJSONArray("list");
+            Log.v("!!!", String.valueOf(news_list.length()));
             for (int i = 0; i < news_list.length(); i++) {
                 JSONObject obj = news_list.getJSONObject(i);
-                addItem(new SearchResultItem(String.valueOf(results.size()),obj.getString("news_Title"),obj.getString("news_ID"), obj.getString("news_Pictures")));
+                String tmp = obj.getString("news_Pictures");
+                String[] mm = tmp.split("[ ;]");
+                List<String> picture_url = new ArrayList<String>();
+                for (int j=0; j<mm.length; j++)
+                {
+                    Log.d("check",mm[j] );
+                    picture_url.add(mm[j]);
+                }
+                Log.d("check","????" );
+                addItem(new SearchResults.SearchResultItem(String.valueOf(results.size()),obj.getString("news_Title"),obj.getString("news_ID"),picture_url));
             }
 
             if (news_list.length() != 0) {
@@ -115,12 +126,14 @@ public class SearchResults {
         public final String content;
         public final String news_id;
         public final Bitmap news_picture;
+        public final List<String> picture_id;
         public boolean isRead = false;
 
-        public SearchResultItem(String id, String content, String news_id, String url) {
+        public SearchResultItem(String id, String content, String news_id, List<String> url) {
             this.id = id;
             this.content = content;
             this.news_id = news_id;
+            this.picture_id = url;
             news_picture = null;//getHttpBitmap(url);
         }
 
