@@ -23,6 +23,7 @@ import android.widget.Toast;
 import java.util.List;
 
 import test.newsbulletin.dummy.DummyContent;
+import test.newsbulletin.file.FileIO;
 import test.newsbulletin.model.NewsList;
 
 
@@ -43,8 +44,7 @@ public class ItemListFragment extends Fragment {
     View recyclerView;
     SimpleItemRecyclerViewAdapter mAdapter;
     // TODO: Rename and change types of parameters
-
-
+    FileIO io;
 
 
     @Override
@@ -64,7 +64,11 @@ public class ItemListFragment extends Fragment {
 
             return recyclerView;
         }
-        mAdapter = new SimpleItemRecyclerViewAdapter(new NewsList(getArguments().getString("classTag")));
+        io = new FileIO(getActivity());
+        NewsList newsList = new NewsList(getArguments().getString("classTag"));
+        // io.saveNewsList(newsList); // test pass
+        // io.loadNewsList(newsList); // test pass
+        mAdapter = new SimpleItemRecyclerViewAdapter(newsList);
         RecyclerView rv = (RecyclerView) inflater.inflate(
                 R.layout.item_list, container, false);
         setupRecyclerView(rv);
