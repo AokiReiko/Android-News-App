@@ -62,6 +62,7 @@ public class ItemDetailFragment extends Fragment {
             // Load the dummy content specified by the fragment
             // arguments. In a real-world scenario, use a Loader
             // to load content from a content provider.
+
             mList  = new DetailList(getArguments().getString(ARG_ITEM_ID));
             Thread thread=new Thread(new Runnable(){
                 @Override

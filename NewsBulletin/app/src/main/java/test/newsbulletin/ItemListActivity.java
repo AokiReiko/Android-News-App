@@ -15,6 +15,7 @@ import android.support.design.widget.NavigationView.OnNavigationItemSelectedList
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -37,8 +38,6 @@ import android.view.ViewGroup;
 import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.widget.TabHost;
 import android.widget.TableLayout;
 import android.widget.TextView;
@@ -46,18 +45,14 @@ import android.app.Application;
 import android.view.MenuItem;
 import android.support.design.widget.NavigationView;
 import android.widget.Toast;
-import android.widget.ImageView;
 
 import test.newsbulletin.dummy.DummyContent;
 import test.newsbulletin.file.FileIO;
 import test.newsbulletin.model.Data;
-import test.newsbulletin.speech.SpeechGenerator;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.iflytek.cloud.SpeechUtility;
 
 /**
  * An activity representing a list of Items. This activity
@@ -81,23 +76,21 @@ public class ItemListActivity extends AppCompatActivity
     private ArrayList<String> tabList = new ArrayList<>();
     private ArrayList<String> unusedTabList = new ArrayList<>();
     Data find_day = new Data();
-    SpeechGenerator generator = null;
     FileIO io;
+    {
+        Log.d("func","cons");
+    }
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         Log.d("func","main oncreate");
-        //generator = new SpeechGenerator("测试语音", this);
-        //generator.start();
-
         io = new FileIO(this);
-        Data data = (Data) getApplication();
         boolean is_loaded = io.loadConfig();
         if(!is_loaded)
         {
             Log.d("func","first time loading config");
-            data.buildTabList();
+            //find_day.buildTabList();
         }
         setContentView(R.layout.main_activity);
 
@@ -119,10 +112,11 @@ public class ItemListActivity extends AppCompatActivity
         setupTabLayout(tabLayout);
 
         viewPager = (ViewPager) findViewById(R.id.viewpager);
-        tabLayout.setupWithViewPager(viewPager);
+
         if (viewPager != null) {
             setupViewPager(viewPager);
         }
+        tabLayout.setupWithViewPager(viewPager);
         Context c;
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -162,8 +156,6 @@ public class ItemListActivity extends AppCompatActivity
     @Override
     public void onDestroy()
     {
-        if(generator != null)
-            generator.end();
         io.saveConfig();
         Log.d("func", "destroy");
         super.onDestroy();
@@ -171,13 +163,15 @@ public class ItemListActivity extends AppCompatActivity
 
     private void setupViewPager(ViewPager viewPager) {
 
-        mAdapter adapter = new mAdapter(this.getSupportFragmentManager());
+        final mAdapter adapter = new mAdapter(this.getSupportFragmentManager());
+
         for (String tab_name: tabList) {
             Bundle bundle = new Bundle();
             ItemListFragment fragment = new ItemListFragment();
             bundle.putString("classTag",tab_name);
             fragment.setArguments(bundle);
             adapter.addFragment(fragment, tab_name);
+            Log.d("func","add frag" + fragment);
 
         }
 
@@ -212,26 +206,17 @@ public class ItemListActivity extends AppCompatActivity
                 new NavigationView.OnNavigationItemSelectedListener() {
                     @Override
                     public boolean onNavigationItemSelected(MenuItem menuItem) {
-                        Data mData = (Data) getApplication();
+
                         switch (menuItem.getItemId()) {
                             case R.id.nav_tag:
                                 Intent intent = new Intent(mDrawerLayout.getContext(), DragTabActivity.class);
                                 startActivity(intent);
-                                Log.d("func", "nav_tag" + "");
+                                Log.d("func", "nav_tag" +
+                                        "");
                             case R.id.nav_friends:
                                 Log.d("func", "discuss_nav");
                             case R.id.nav_messages:
                                 Log.d("func", "message_nav");
-                            case R.id.pic_yes:
-                                mData.if_pic = true;
-                                Log.d("check", String.valueOf(mData.if_pic));
-                                mData.which_inter = true;
-                                break;
-                            case R.id.pic_np:
-                                mData.if_pic = false;
-                                Log.d("check", String.valueOf(mData.if_pic));
-                                mData.which_inter = false;
-                                break;
                         }
                         menuItem.setChecked(true);
                         mDrawerLayout.closeDrawers();
@@ -240,8 +225,8 @@ public class ItemListActivity extends AppCompatActivity
                     }
                 });
     }
-    private void setupTabLayout(@NonNull TabLayout tabLayout) {
-        Log.d("func", "set up tabhost");
+    private void setupTabLayout(@NonNull final TabLayout tabLayout) {
+        Log.d("func", "set up tabhost" );
         tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -267,6 +252,8 @@ public class ItemListActivity extends AppCompatActivity
         });
 
     }
+
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Log.d("func", ""+item.getTitle());
@@ -289,17 +276,7 @@ public class ItemListActivity extends AppCompatActivity
         }
         return super.onOptionsItemSelected(item);
     }
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_search, menu);
-        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
-        SearchableInfo info = searchManager.getSearchableInfo(getComponentName());
-        searchView.setSearchableInfo(info);
 
-        searchView.setIconifiedByDefault(false); // Do not iconify the widget; expand it by default
-        return true;
-    }
 
 /*    @Override
     public boolean onOptionsItemSelected(MenuItem item)
@@ -337,10 +314,14 @@ public class ItemListActivity extends AppCompatActivity
             mFragmentTitles.add(title);
         }
 
+        public List<Fragment> getmFragments() { return mFragments; }
         @Override
         public Fragment getItem(int position) {
+            Log.d("func", "getitem" + position + mFragmentTitles.get(position)+mFragmentTitles.toString());
+
             return mFragments.get(position);
         }
+
 
         @Override
         public int getCount() {
@@ -354,18 +335,7 @@ public class ItemListActivity extends AppCompatActivity
     }
     private void  buildTabList() {
         // ToDo(zps):if there is config file, read it.
-        /*tabList.add("最新");
-        tabList.add("国内");
-        tabList.add("科技");
-        tabList.add("财经");
-        tabList.add("娱乐");
-        tabList.add("体育");
 
-        unusedTabList.add("军事");
-        unusedTabList.add("汽车");
-        unusedTabList.add("国际");
-        unusedTabList.add("社会");
-        unusedTabList.add("文化");*/
         Data mAppData = (Data) getApplication();
         unusedTabList = mAppData.getUnusedTabList();
         tabList = mAppData.getTabList();

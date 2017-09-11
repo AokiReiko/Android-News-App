@@ -30,9 +30,9 @@ public class NewsList {
     /**
      * An array of news items and their initialization.
      */
-    private List<NewsListItem> newsList = new ArrayList<NewsListItem>();
+    public List<NewsListItem> newsList = new ArrayList<NewsListItem>();
     private int pageNumber = 1;
-    private String classTag = "最新";
+    public String classTag = "最新";
     private static final String traverse_base_url = "http://166.111.68.66:2042/news/action/query/latest";
     private static final Map<String, Integer> tagMap = new HashMap<String , Integer>(){{
         put("科技", 1);
@@ -67,12 +67,10 @@ public class NewsList {
     }
 
     public NewsList() {
-        loadMore();
     }
     public NewsList(String classTag) {
         Log.d("func", classTag);
         this.classTag = classTag;
-        loadMore();
     }
     public NewsListItem get(int i) {
         if (i < newsList.size()) return newsList.get(i);
@@ -81,76 +79,71 @@ public class NewsList {
     public int size() {
         return newsList.size();
     }
-    public synchronized void loadMore(){
+    public synchronized boolean loadMore(){
         /* Not do this in our main thread. */
         Log.d("func", "loading page " + pageNumber + ". " + "Size: " + newsList.size());
-        Thread thread=new Thread(new Runnable()
-        {
-            @Override
-            public void run()
+        Log.d("func","begin thread" +
+                "");
+        int resCode = -1;
+        String required_url = getSpecificPageUrl(pageNumber, classTag);
+        Log.d("func",required_url);
+        try {
+            /* Open the url */
+            URL url = new URL(required_url);
+
+            HttpURLConnection cnt = (HttpURLConnection)url.openConnection();
+            cnt.setRequestMethod("GET");
+            cnt.setConnectTimeout(5*1000);
+
+            InputStream in = cnt.getInputStream();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+
+            /* Get all the content of the html */
+            String html = "";
             {
-                Log.d("func","begin thread" +
-                        "");
-                int resCode = -1;
-                String required_url = getSpecificPageUrl(pageNumber, classTag);
-                Log.d("func",required_url);
-                try {
-                    /* Open the url */
-                    URL url = new URL(required_url);
-
-                    HttpURLConnection cnt = (HttpURLConnection)url.openConnection();
-                    cnt.setRequestMethod("GET");
-                    cnt.setConnectTimeout(5*1000);
-
-                    InputStream in = cnt.getInputStream();
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-
-                    /* Get all the content of the html */
-                    String html = "";
-                    {
-                        String line;
-                        while ((line = reader.readLine()) != null) {
-                            html += line;
-                        }
-                    }
-
-                    //ToDo(aokireiko):judge when the connection fails.
-                    resCode = cnt.getResponseCode();
-
-                    if (resCode == HttpURLConnection.HTTP_OK) {
-                        Log.d("func","" + resCode);
-                    }
-
-                    JSONObject js_obj = new JSONObject(html);
-                    JSONArray news_list = js_obj.getJSONArray("list");
-                    for (int i = 0; i < news_list.length(); i++) {
-                        JSONObject obj = news_list.getJSONObject(i);
-                        addItem(new NewsListItem(String.valueOf(newsList.size()),obj.getString("news_Title"),obj.getString("news_ID"), obj.getString("news_Pictures")));
-                    }
-
-                    if (news_list.length() != 0) {
-                        pageNumber += 1;
-                    }
-
-                } catch (MalformedURLException eurl){
-                    Log.d("func","url error");
-
-                } catch (IOException eio) {
-                    eio.printStackTrace();
-                    Log.d("func","io error "+eio.getMessage());
-
-                } catch (JSONException ejson) {
-                    Log.d("func","json error "+ ejson.getMessage());
-
-                } catch (Exception eso) {
-                    Log.d("func", eso.getMessage());
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    html += line;
                 }
             }
-        });
-        thread.start();
 
+            //ToDo(aokireiko):judge when the connection fails.
+            resCode = cnt.getResponseCode();
 
-        Log.d("func", "http finished");
+            if (resCode == HttpURLConnection.HTTP_OK) {
+                Log.d("func","" + resCode + classTag);
+            }
+
+            JSONObject js_obj = new JSONObject(html);
+            JSONArray news_list = js_obj.getJSONArray("list");
+            for (int i = 0; i < news_list.length(); i++) {
+                JSONObject obj = news_list.getJSONObject(i);
+                addItem(new NewsListItem(String.valueOf(newsList.size()),obj.getString("news_Title"),obj.getString("news_ID"), obj.getString("news_Pictures")));
+            }
+
+            if (news_list.length() != 0) {
+                pageNumber += 1;
+            }
+            return true;
+
+        } catch (MalformedURLException eurl){
+            Log.d("func","url error");
+            return false;
+
+        } catch (IOException eio) {
+            eio.printStackTrace();
+            Log.d("func","io error "+eio.getMessage());
+            return false;
+
+        } catch (JSONException ejson) {
+            Log.d("func","json error "+ ejson.getMessage());
+            return false;
+
+        } catch (Exception eso) {
+            Log.d("func", eso.getMessage());
+            return false;
+        }
+
         // Add some sample items.
 
 

@@ -1,5 +1,6 @@
 package test.newsbulletin.model;
 import android.app.Application;
+import android.util.Log;
 
 import com.iflytek.cloud.SpeechUtility;
 
@@ -35,7 +36,7 @@ public class Data extends Application {
             SpeechUtility.createUtility(this, "appid=" + getString(R.string.app_id));
         }
     }
-    public void  buildTabList() {
+    private void buildTabList() {
         // ToDo(zps):if there is config file, read it.
         tabList.add("最新");
         tabList.add("国内");
@@ -51,6 +52,7 @@ public class Data extends Application {
         unusedTabList.add("文化");
         unusedTabList.add("教育");
         unusedTabList.add("健康");
+        Log.d("list","build tab list");
     }
 
 }

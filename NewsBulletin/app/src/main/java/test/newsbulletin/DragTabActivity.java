@@ -43,6 +43,8 @@ public class DragTabActivity extends Activity {
         //dragList = getIntent().getStringArrayListExtra("TAB_LIST");
         dragList = mAppData.getTabList();
         Log.d("list",dragList.toString());
+        Toast.makeText(DragTabActivity.this,
+                dragList.toString(), Toast.LENGTH_SHORT).show();
 
         final List<String> unsignedList;
         //unsignedList = getIntent().getStringArrayListExtra("UNUSED_TAB_LIST");
@@ -73,6 +75,7 @@ public class DragTabActivity extends Activity {
                                 "position" + position + "has been removed", Toast.LENGTH_SHORT).show();
                         mUnsignedView.addItem(removedItem);
                         unsignedList.add(dragList.get(position));
+
                         dragList.remove(position);
                         Toast.makeText(DragTabActivity.this,
                                 "draglist:"+dragList.hashCode(), Toast.LENGTH_SHORT).show();
