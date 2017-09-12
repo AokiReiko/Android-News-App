@@ -27,6 +27,7 @@ public class DragTabActivity extends Activity {
     private Button mQuitBtn;
     private UnsignedRecyclerView mUnsignedView;
     private DragRecyclerView mDragView;
+    private Data data;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +77,7 @@ public class DragTabActivity extends Activity {
                                 "position" + position + "has been removed", Toast.LENGTH_SHORT).show();
                         mUnsignedView.addItem(removedItem);
                         unsignedList.add(dragList.get(position));
+                        data.setTabChanged(true);
                         Log.d("checkit",dragList.get(position));
 
                         dragList.remove(position);
@@ -106,6 +108,7 @@ public class DragTabActivity extends Activity {
                         mDragView.addItem(removedItem);
                         dragList.add(unsignedList.get(position));
                         unsignedList.remove(position);
+                        data.setTabChanged(true);
                     }
                 })
                 .build();

@@ -75,9 +75,10 @@ public class ItemListActivity extends AppCompatActivity
     private DrawerLayout mDrawerLayout;
     private SearchView mSearchView;
     private ViewPager viewPager;
+    TabLayout tabLayout;
     private ArrayList<String> tabList = new ArrayList<>();
     private ArrayList<String> unusedTabList = new ArrayList<>();
-    Data data;
+    Data data = new Data();
     FileIO io;
     {
         Log.d("func","cons");
@@ -88,7 +89,6 @@ public class ItemListActivity extends AppCompatActivity
 
         Log.d("func","main oncreate");
         io = new FileIO(this);
-        data = (Data) getApplication();
         boolean is_loaded = io.loadConfig();
         if(!is_loaded)
         {
@@ -111,7 +111,7 @@ public class ItemListActivity extends AppCompatActivity
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 
         buildTabList();
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tablayout);
+        tabLayout = (TabLayout) findViewById(R.id.tablayout);
         setupTabLayout(tabLayout);
 
         viewPager = (ViewPager) findViewById(R.id.viewpager);
@@ -166,10 +166,10 @@ public class ItemListActivity extends AppCompatActivity
 
     private void setupViewPager(ViewPager viewPager) {
         if (!data.tabChanged) {
+            Log.d("debug","tab not change");
             return;
         }
         data.setTabChanged(false);
-
         final mAdapter adapter = new mAdapter(this.getSupportFragmentManager());
 
         Map<String, Fragment> map = data.savedFragments;
