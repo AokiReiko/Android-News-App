@@ -91,8 +91,9 @@ public class ItemListActivity extends AppCompatActivity
         //generator = new SpeechGenerator("测试语音", this);
         //generator.start();
 
-        io = new FileIO(this);
+
         Data data = (Data) getApplication();
+        io = new FileIO();
         boolean is_loaded = io.loadConfig();
         if(!is_loaded)
         {

@@ -1,6 +1,7 @@
 package test.newsbulletin.file;
 
 import android.app.Activity;
+import android.app.Application;
 import android.provider.ContactsContract;
 import android.util.Log;
 
@@ -25,15 +26,13 @@ import test.newsbulletin.model.NewsList;
 
 public class FileIO
 {
-    Activity activity;
+    public static Application application;
 
-    public FileIO(Activity _activity)
-    {
-        activity = _activity;
-    }
+    public FileIO() {}
+
     public void saveConfig() // 存储配置文件
     {
-        File path = activity.getFilesDir();
+        File path = application.getFilesDir();
         File dir = new File(path, "Config");
         if(!dir.isDirectory()) {
             dir.mkdir();
@@ -43,7 +42,7 @@ public class FileIO
         try {
             ByteArrayOutputStream byte_out = new ByteArrayOutputStream();
             ObjectOutputStream object_out = new ObjectOutputStream(byte_out);
-            Data data = (Data) activity.getApplication();
+            Data data = (Data) application;
             object_out.writeObject(data.tabList);
             object_out.writeObject(data.unusedTabList);
             bytes = byte_out.toByteArray();
@@ -67,7 +66,7 @@ public class FileIO
         try {
             ByteArrayInputStream byte_in = new ByteArrayInputStream(bytes);
             ObjectInputStream object_in = new ObjectInputStream(byte_in);
-            data = (Data) activity.getApplication();
+            data = (Data) application;
             object_1 = (Object) object_in.readObject();
             object_2 = (Object) object_in.readObject();
         }
@@ -84,7 +83,7 @@ public class FileIO
 
     public void saveDetail(DetailList list) // 收藏新闻时调用
     {
-        File path = activity.getFilesDir();
+        File path = application.getFilesDir();
         File dir = new File(path, "Detail");
         if(!dir.isDirectory())
             dir.mkdir();
@@ -113,8 +112,8 @@ public class FileIO
     public void eraseDetail(DetailList list) // 取消收藏时调用
     {
         String id = list.pageID;
-        File path = activity.getFilesDir();
-        File dir = new File(path, "Details/");
+        File path = application.getFilesDir();
+        File dir = new File(path, "Detail/");
         if(dir.isFile())
             dir.delete();
     }
@@ -138,7 +137,7 @@ public class FileIO
     }
     public void saveNewsList(NewsList list) // 存储新闻列表
     {
-        File path = activity.getFilesDir();
+        File path = application.getFilesDir();
         File dir = new File(path, "NewsList");
         if(!dir.isDirectory())
             dir.mkdir();
@@ -183,7 +182,7 @@ public class FileIO
     }
     public void getSavedNewsList(NewsList list) // 获得已收藏新闻列表
     {
-        File path = activity.getFilesDir();
+        File path = application.getFilesDir();
         File dir = new File(path, "Details");
         int num = 0;
         list.newsList.clear();
@@ -198,7 +197,7 @@ public class FileIO
             String str_num = String.valueOf(num);
             String title = detail.newsList.Title;
             String news_id = id;
-            String url = detail.newsList.Picture.get(0);
+            List<String> url = detail.newsList.Picture;
             NewsList.NewsListItem item = new NewsList.NewsListItem(str_num, title, news_id, url);
             list.newsList.add(item);
             list.newsMap.put(item.id, item);
@@ -211,7 +210,7 @@ public class FileIO
         byte[] buffer = null;
 
         try {
-            File dir = activity.getFilesDir();
+            File dir = application.getFilesDir();
             File sub_dir = new File(dir, filename);
             Log.d("func", sub_dir.toString());
             FileInputStream in = new FileInputStream(sub_dir);
@@ -230,7 +229,7 @@ public class FileIO
     private void writeFile(byte[] bytes, String filename)
     {
         try {
-            File dir = activity.getFilesDir();
+            File dir = application.getFilesDir();
             File sub_dir = new File(dir, filename);
             Log.d("func", sub_dir.toString());
             FileOutputStream out = new FileOutputStream(sub_dir);
