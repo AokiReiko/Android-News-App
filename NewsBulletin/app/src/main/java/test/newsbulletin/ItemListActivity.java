@@ -78,7 +78,7 @@ public class ItemListActivity extends AppCompatActivity
     TabLayout tabLayout;
     private ArrayList<String> tabList = new ArrayList<>();
     private ArrayList<String> unusedTabList = new ArrayList<>();
-    Data data = new Data();
+    Data data;
     FileIO io;
     {
         Log.d("func","cons");
@@ -96,6 +96,8 @@ public class ItemListActivity extends AppCompatActivity
             //find_day.buildTabList();
         }
         setContentView(R.layout.main_activity);
+        data = (Data) getApplication();
+        data.setTabChanged(true);
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);

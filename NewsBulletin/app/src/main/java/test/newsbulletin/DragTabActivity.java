@@ -27,7 +27,6 @@ public class DragTabActivity extends Activity {
     private Button mQuitBtn;
     private UnsignedRecyclerView mUnsignedView;
     private DragRecyclerView mDragView;
-    private Data data;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +39,7 @@ public class DragTabActivity extends Activity {
         //setSupportActionBar(toolbar);
         Log.d("func","1");
         final List<String> dragList;
-        Data mAppData = (Data) getApplication();
+        final Data mAppData = (Data) getApplication();
         //dragList = getIntent().getStringArrayListExtra("TAB_LIST");
         dragList = mAppData.getTabList();
         Log.d("list",dragList.toString());
@@ -74,15 +73,15 @@ public class DragTabActivity extends Activity {
                     @Override
                     public void onItemRemoved(int position, String removedItem) {
                         Toast.makeText(DragTabActivity.this,
-                                "position" + position + "has been removed", Toast.LENGTH_SHORT).show();
+                                "position" + position + "has been removed " + dragList.get(position), Toast.LENGTH_SHORT).show();
+                        Log.d("drag","drag:"+dragList.toString());
                         mUnsignedView.addItem(removedItem);
                         unsignedList.add(dragList.get(position));
-                        data.setTabChanged(true);
+                        mAppData.setTabChanged(true);
                         Log.d("checkit",dragList.get(position));
 
                         dragList.remove(position);
-                        Toast.makeText(DragTabActivity.this,
-                                "draglist:"+dragList.hashCode(), Toast.LENGTH_SHORT).show();
+
                     }
                 })
                 .keepItemCount(2)
@@ -105,10 +104,14 @@ public class DragTabActivity extends Activity {
                 .onItemRemoved(new OnItemRemovedListener<String>() {
                     @Override
                     public void onItemRemoved(int position, String removedItem) {
+                        Toast.makeText(DragTabActivity.this,
+                                "position" + position + "has been added " + unsignedList.get(position), Toast.LENGTH_SHORT).show();
                         mDragView.addItem(removedItem);
                         dragList.add(unsignedList.get(position));
                         unsignedList.remove(position);
-                        data.setTabChanged(true);
+                        mAppData.setTabChanged(true);
+                        Log.d("drag",unsignedList.toString());
+
                     }
                 })
                 .build();
