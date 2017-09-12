@@ -29,6 +29,7 @@ public class Data extends Application {
 
     public ArrayList<String> getTabList() { return tabList; }
     public ArrayList<String> getUnusedTabList() { return unusedTabList; }
+    public boolean tabChanged = true;
 
     public Map<String, Fragment> savedFragments = new HashMap<>();
 
@@ -62,6 +63,7 @@ public class Data extends Application {
         unusedTabList.add("健康");
         Log.d("list","build tab list");
     }
+    public void setTabChanged(boolean state) { tabChanged = state; }
 
 }
 

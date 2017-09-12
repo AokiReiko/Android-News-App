@@ -165,6 +165,10 @@ public class ItemListActivity extends AppCompatActivity
     }
 
     private void setupViewPager(ViewPager viewPager) {
+        if (!data.tabChanged) {
+            return;
+        }
+        data.setTabChanged(false);
 
         final mAdapter adapter = new mAdapter(this.getSupportFragmentManager());
 
