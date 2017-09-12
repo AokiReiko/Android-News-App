@@ -14,6 +14,8 @@ import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
 import android.view.Menu;
 import android.widget.Toast;
+
+import test.newsbulletin.model.DetailContent;
 import test.newsbulletin.speech.SpeechGenerator;
 
 /**
@@ -72,7 +74,9 @@ public class ItemDetailActivity extends AppCompatActivity {
                 if(!isSpeechActive)
                 {
                     isSpeechActive = isSpeechStart = true;
-                    String str_read = fragment.mList.newsList.Title + "。作者：" + fragment.mList.newsList.Author + "。" + fragment.mList.newsList.Content;
+
+                    DetailContent.NewsDetailItem item = fragment.mDetail.detailItem;
+                    String str_read = item.Title + "。作者：" + item.Author + "。" + item.Content;
                     generator = new SpeechGenerator(str_read, this_activity);
                     generator.start();
                 }

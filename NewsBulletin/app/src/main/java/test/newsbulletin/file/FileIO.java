@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import test.newsbulletin.model.Data;
-import test.newsbulletin.model.DetailList;
+import test.newsbulletin.model.DetailContent;
 import test.newsbulletin.model.NewsList;
 
 /**
@@ -82,21 +82,21 @@ public class FileIO
         return true;
     }
 
-    public void saveDetail(DetailList list) // 收藏新闻时调用
+    public void saveDetail(DetailContent list) // 收藏新闻时调用
     {
         File path = activity.getFilesDir();
         File dir = new File(path, "Detail");
         if(!dir.isDirectory())
             dir.mkdir();
 
-        String id = list.pageID;
+        String id = list.detailID;
         String filename = "Detail/" + id + ".detail";
         byte[] bytes = null;
         try {
 
             ByteArrayOutputStream byte_out = new ByteArrayOutputStream();
             ObjectOutputStream object_out = new ObjectOutputStream(byte_out);
-            object_out.writeObject(list.newsList);
+            object_out.writeObject(list.detailID);
             bytes = byte_out.toByteArray();
             byte_out.close();
             object_out.close();
@@ -110,24 +110,24 @@ public class FileIO
         Log.d("func", "detail save finished");
     }
 
-    public void eraseDetail(DetailList list) // 取消收藏时调用
+    public void eraseDetail(DetailContent list) // 取消收藏时调用
     {
-        String id = list.pageID;
+        String id = list.detailID;
         File path = activity.getFilesDir();
         File dir = new File(path, "Details/");
         if(dir.isFile())
             dir.delete();
     }
 
-    public boolean loadDetail(DetailList list) // 当某条收藏新闻被加载时调用（离线时调用）
+    public boolean loadDetail(DetailContent list) // 当某条收藏新闻被加载时调用（离线时调用）
     {
-        String id = list.pageID;
+        String id = list.detailID;
         String filename = "Detail/" + id + ".detail";
         byte[] bytes = readFile(filename);
         try {
             ByteArrayInputStream byte_in = new ByteArrayInputStream(bytes);
             ObjectInputStream object_in = new ObjectInputStream(byte_in);
-            list.newsList = (DetailList.NewsListItem) object_in.readObject();
+            list.detailItem = (DetailContent.NewsDetailItem) object_in.readObject();
         }
         catch(Exception e)
         {
@@ -192,15 +192,15 @@ public class FileIO
         {
             String id = file.getName();
             Log.d("func", "saved detail: " + id);
-            DetailList detail = new DetailList(id);
+            DetailContent detail = new DetailContent(id);
             loadDetail(detail);
             // detail 转 NewsList.NewsListItem
             String str_num = String.valueOf(num);
-            String title = detail.newsList.Title;
+            String title = detail.detailItem.Title;
             String news_id = id;
-            String url = detail.newsList.Picture.get(0);
+            String url = detail.detailItem.Picture.get(0);
             //TODO:暂时这么写？
-            NewsList.NewsListItem item = new NewsList.NewsListItem(str_num, title, news_id, detail.newsList.Picture);
+            NewsList.NewsListItem item = new NewsList.NewsListItem(str_num, title, news_id, detail.detailItem.Picture);
             list.newsList.add(item);
             list.newsMap.put(item.id, item);
             num++;

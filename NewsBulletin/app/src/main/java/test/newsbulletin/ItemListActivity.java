@@ -77,7 +77,7 @@ public class ItemListActivity extends AppCompatActivity
     private ViewPager viewPager;
     private ArrayList<String> tabList = new ArrayList<>();
     private ArrayList<String> unusedTabList = new ArrayList<>();
-    Data data = new Data();
+    Data data;
     FileIO io;
     {
         Log.d("func","cons");
@@ -88,6 +88,7 @@ public class ItemListActivity extends AppCompatActivity
 
         Log.d("func","main oncreate");
         io = new FileIO(this);
+        data = (Data) getApplication();
         boolean is_loaded = io.loadConfig();
         if(!is_loaded)
         {
