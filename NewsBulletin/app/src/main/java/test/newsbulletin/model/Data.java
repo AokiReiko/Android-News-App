@@ -5,6 +5,11 @@ import android.util.Log;
 import com.iflytek.cloud.SpeechUtility;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import android.support.v4.app.Fragment;
+
+import java.util.Map;
+
 import android.util.Log;
 import test.newsbulletin.R;
 import test.newsbulletin.file.FileIO;
@@ -12,6 +17,7 @@ import test.newsbulletin.file.FileIO;
 /**
  * Created by 32928 on 2017/9/9.
  */
+
 
 public class Data extends Application {
     public static boolean if_pic = true;
@@ -21,9 +27,10 @@ public class Data extends Application {
     public ArrayList<String> tabList = new ArrayList<>();
     public ArrayList<String> unusedTabList = new ArrayList<>();
 
-
     public ArrayList<String> getTabList() { return tabList; }
     public ArrayList<String> getUnusedTabList() { return unusedTabList; }
+
+    public Map<String, Fragment> savedFragments = new HashMap<>();
 
     boolean isSpeechEnable = true;
 

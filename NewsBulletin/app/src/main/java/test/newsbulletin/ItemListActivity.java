@@ -15,6 +15,7 @@ import android.support.design.widget.NavigationView.OnNavigationItemSelectedList
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
@@ -53,6 +54,7 @@ import test.newsbulletin.model.Data;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * An activity representing a list of Items. This activity
@@ -75,7 +77,7 @@ public class ItemListActivity extends AppCompatActivity
     private ViewPager viewPager;
     private ArrayList<String> tabList = new ArrayList<>();
     private ArrayList<String> unusedTabList = new ArrayList<>();
-    Data find_day = new Data();
+    Data data = new Data();
     FileIO io;
     {
         Log.d("func","cons");
@@ -165,13 +167,22 @@ public class ItemListActivity extends AppCompatActivity
 
         final mAdapter adapter = new mAdapter(this.getSupportFragmentManager());
 
+        Map<String, Fragment> map = data.savedFragments;
         for (String tab_name: tabList) {
-            Bundle bundle = new Bundle();
-            ItemListFragment fragment = new ItemListFragment();
-            bundle.putString("classTag",tab_name);
-            fragment.setArguments(bundle);
-            adapter.addFragment(fragment, tab_name);
-            Log.d("func","add frag" + fragment);
+            Log.d("func","saved f:" + map.size());
+
+            if (map.containsKey(tab_name)) {
+                adapter.addFragment(map.get(tab_name), tab_name);
+            } else {
+                Bundle bundle = new Bundle();
+                ItemListFragment fragment = new ItemListFragment();
+                bundle.putString("classTag",tab_name);
+                fragment.setArguments(bundle);
+                adapter.addFragment(fragment, tab_name);
+                Log.d("func","add frag" + fragment);
+                map.put(tab_name,fragment);
+            }
+
 
         }
 
@@ -301,7 +312,7 @@ public class ItemListActivity extends AppCompatActivity
     }DrawerLayout Menu 的点击事件**/
 
 
-    public class mAdapter extends FragmentPagerAdapter {
+    public class mAdapter extends FragmentStatePagerAdapter {
         private final List<Fragment> mFragments = new ArrayList<>();
         private final List<String> mFragmentTitles = new ArrayList<>();
 

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.ActionBar;
@@ -22,7 +23,6 @@ import test.newsbulletin.speech.SpeechGenerator;
  * in a {@link ItemListActivity}.
  */
 public class ItemDetailActivity extends AppCompatActivity {
-
     boolean isSpeechActive = false, isSpeechStart = false;
     SpeechGenerator generator = null;
     ItemDetailFragment fragment = null;
@@ -132,7 +132,7 @@ public class ItemDetailActivity extends AppCompatActivity {
             //
             // http://developer.android.com/design/patterns/navigation.html#up-vs-back
             //
-            NavUtils.navigateUpTo(this, new Intent(this, ItemListActivity.class));
+            finish();
             return true;
         }
         return super.onOptionsItemSelected(item);
