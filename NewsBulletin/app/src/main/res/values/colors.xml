@@ -7,4 +7,5 @@
     <color name="colorRead">#FFFFFF</color>
     <color name="Text_Color">#000000</color>
     <color name="Background">#ffffff</color>
+    <color name="white">#ffffff</color>
 </resources>
