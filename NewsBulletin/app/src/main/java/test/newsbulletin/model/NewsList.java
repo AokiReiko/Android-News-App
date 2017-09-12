@@ -11,6 +11,7 @@ import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -25,6 +26,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.net.HttpURLConnection;
+
+import test.newsbulletin.file.FileIO;
 
 public class NewsList {
 
@@ -79,12 +82,14 @@ public class NewsList {
         if (i < newsList.size()) return newsList.get(i);
         return null;
     }
+    FileIO io = new FileIO();
     public int size() {
         return newsList.size();
     }
     public synchronized void loadMore(){
         /* Not do this in our main thread. */
         Log.d("func", "loading page " + pageNumber + ". " + "Size: " + newsList.size());
+        final NewsList newsListThis = this;
         Thread thread=new Thread(new Runnable()
         {
             @Override
@@ -115,45 +120,57 @@ public class NewsList {
                         }
                     }
 
-                    //ToDo(aokireiko):judge when the connection fails.
                     resCode = cnt.getResponseCode();
+
 
                     if (resCode == HttpURLConnection.HTTP_OK) {
                         Log.d("func","" + resCode);
-                    }
-
-                    JSONObject js_obj = new JSONObject(html);
-                    JSONArray news_list = js_obj.getJSONArray("list");
-                    Log.v("!!!", String.valueOf(news_list.length()));
-                    for (int i = 0; i < news_list.length(); i++) {
-                        JSONObject obj = news_list.getJSONObject(i);
-                        String tmp = obj.getString("news_Pictures");
-                        String[] mm = tmp.split("[ ;]");
-                        List<String> picture_url = new ArrayList<String>();
-                        for (int j=0; j<mm.length; j++)
-                        {
-                            Log.d("check",mm[j] );
-                            picture_url.add(mm[j]);
+                        JSONObject js_obj = new JSONObject(html);
+                        JSONArray news_list = js_obj.getJSONArray("list");
+                        Log.v("!!!", String.valueOf(news_list.length()));
+                        for (int i = 0; i < news_list.length(); i++) {
+                            JSONObject obj = news_list.getJSONObject(i);
+                            String tmp = obj.getString("news_Pictures");
+                            String[] mm = tmp.split("[ ;]");
+                            List<String> picture_url = new ArrayList<String>();
+                            for (int j=0; j<mm.length; j++)
+                            {
+                                Log.d("check",mm[j] );
+                                picture_url.add(mm[j]);
+                            }
+                            Log.d("check","????" );
+                            addItem(new NewsListItem(String.valueOf(newsList.size()),obj.getString("news_Title"),obj.getString("news_ID"),picture_url));
                         }
-                        Log.d("check","????" );
-                        addItem(new NewsListItem(String.valueOf(newsList.size()),obj.getString("news_Title"),obj.getString("news_ID"),picture_url));
+
+                        if (news_list.length() != 0) {
+                            pageNumber += 1;
+                        }
+                        io.saveNewsList(newsListThis);
+                    }
+                    else
+                    {
+                        // when connection fails
+                        io.loadNewsList(newsListThis);
                     }
 
-                    if (news_list.length() != 0) {
-                        pageNumber += 1;
-                    }
 
-                } catch (MalformedURLException eurl){
+                }
+
+                catch (MalformedURLException eurl){
+                    io.loadNewsList(newsListThis);
                     Log.d("func","url error");
 
                 } catch (IOException eio) {
+                    io.loadNewsList(newsListThis);
                     eio.printStackTrace();
                     Log.d("func","io error "+eio.getMessage());
 
                 } catch (JSONException ejson) {
+                    io.loadNewsList(newsListThis);
                     Log.d("func","json error "+ ejson.getMessage());
 
                 } catch (Exception eso) {
+                    io.loadNewsList(newsListThis);
                     Log.d("func", eso.getMessage());
                 }
             }

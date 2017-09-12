@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.net.HttpURLConnection;
 
+import test.newsbulletin.file.FileIO;
 import test.newsbulletin.model.NewsList;
 
 /**
@@ -43,9 +44,11 @@ public class DetailList {
             e.printStackTrace();
         }
     }
+    FileIO io = new FileIO();
     private synchronized void loadMore() throws InterruptedException {
         /* Not do this in our main thread. */
         Log.d("func", "ID !!! " + pageID );
+        final DetailList detailListThis = this;
         Thread thread=new Thread(new Runnable()
         {
             @Override
@@ -90,17 +93,13 @@ public class DetailList {
                     addItem(new NewsListItem(pageID,js_obj.getString("news_Title"),js_obj.getString("news_Author"),js_obj.getString("news_Content"),picture_url));
 
 
-                } catch (MalformedURLException eurl){
-                    Log.d("func","url error");
-
-                } catch (IOException eio) {
-                    eio.printStackTrace();
-                    Log.d("func","io error "+eio.getMessage());
-
-                } catch (JSONException ejson) {
-                    Log.d("func","json error "+ ejson.getMessage());
-
-                } catch (Exception eso) {
+                }
+                catch (Exception eso) {
+                    if(!io.loadDetail(detailListThis)) {
+                        List<String> list = new ArrayList<String>();
+                        list.add("disconnect");
+                        addItem(new NewsListItem("-1", "连接失败", "", "无法连接网络且本新闻未缓存", list));
+                    }
                     Log.d("func", eso.getMessage());
                 }
             }

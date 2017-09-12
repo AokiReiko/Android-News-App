@@ -68,8 +68,7 @@ public class ItemListFragment extends Fragment {
         }
         io = new FileIO();
         NewsList newsList = new NewsList(getArguments().getString("classTag"));
-        io.saveNewsList(newsList); // test pass
-        io.loadNewsList(newsList); // test pass
+
         mAdapter = new SimpleItemRecyclerViewAdapter(newsList);
         RecyclerView rv = (RecyclerView) inflater.inflate(
                 R.layout.item_list, container, false);

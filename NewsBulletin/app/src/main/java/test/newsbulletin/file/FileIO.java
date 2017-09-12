@@ -2,6 +2,7 @@ package test.newsbulletin.file;
 
 import android.app.Activity;
 import android.app.Application;
+import android.graphics.drawable.BitmapDrawable;
 import android.provider.ContactsContract;
 import android.util.Log;
 
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import test.newsbulletin.R;
 import test.newsbulletin.model.Data;
 import test.newsbulletin.model.DetailList;
 import test.newsbulletin.model.NewsList;
@@ -113,9 +115,18 @@ public class FileIO
     {
         String id = list.pageID;
         File path = application.getFilesDir();
-        File dir = new File(path, "Detail/");
+
+        File dir = new File(path, "Detail/" + id + ".detail");
         if(dir.isFile())
             dir.delete();
+    }
+
+    public boolean isDetailSaved(DetailList list) // 是否收藏了某条新闻
+    {
+        String id = list.pageID;
+        File path = application.getFilesDir();
+        File dir = new File(path, "Detail/" + id + ".detail");
+        return dir.isFile();
     }
 
     public boolean loadDetail(DetailList list) // 当某条收藏新闻被加载时调用（离线时调用）
