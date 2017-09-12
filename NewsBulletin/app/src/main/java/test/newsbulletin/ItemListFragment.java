@@ -2,8 +2,11 @@ package test.newsbulletin;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -43,6 +46,19 @@ public class ItemListFragment extends Fragment {
 
     static private int lastOffset = 0;
     static private int lastPosition = 0;
+    Handler mHandler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what){
+                case 1:
+                    mAdapter.notifyDataSetChanged();
+                    Log.d("func","handle"+mAdapter.getItemCount()+" "+recyclerView.toString());
+
+                    break;
+                default:;
+            }
+        }
+    };
     View recyclerView;
     SimpleItemRecyclerViewAdapter mAdapter;
     // TODO: Rename and change types of parameters
@@ -52,7 +68,11 @@ public class ItemListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("func", "oncreate");
+        if (mAdapter != null) {
+            mAdapter.notifyDataSetChanged();
+
+        }
+        Log.d("list", "oncreate"+getArguments().getString("classTag"));
 
 
     }
@@ -60,8 +80,9 @@ public class ItemListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.d("func", "oncreate view" +getArguments().getString("classTag")
+        Log.d("list", (savedInstanceState == null)+"oncreate view" +getArguments().getString("classTag") + mHandler.toString()
         );
+        mAdapter = new SimpleItemRecyclerViewAdapter(new NewsList(getArguments().getString("classTag")));
         if (recyclerView != null) {
 
             return recyclerView;
@@ -69,7 +90,7 @@ public class ItemListFragment extends Fragment {
         io = new FileIO();
         NewsList newsList = new NewsList(getArguments().getString("classTag"));
 
-        mAdapter = new SimpleItemRecyclerViewAdapter(newsList);
+        mAdapter.loadMore();
         RecyclerView rv = (RecyclerView) inflater.inflate(
                 R.layout.item_list, container, false);
         setupRecyclerView(rv);
@@ -79,14 +100,19 @@ public class ItemListFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        Log.d("debug","resume");
         scrollToPosition();
+        mAdapter.notifyDataSetChanged();
     }
+
 
     private void scrollToPosition() {
         if(((RecyclerView)recyclerView).getLayoutManager() != null && lastPosition >= 0) {
             ((LinearLayoutManager) ((RecyclerView)recyclerView).getLayoutManager()).scrollToPositionWithOffset(lastPosition, lastOffset);
         }
+
     }
+
     private void getPositionAndOffset() {
         LinearLayoutManager layoutManager = (LinearLayoutManager) ((RecyclerView)recyclerView).getLayoutManager();
         //获取可视的第一个view
@@ -103,6 +129,7 @@ public class ItemListFragment extends Fragment {
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
         recyclerView.setAdapter(mAdapter);
+
         recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext()));
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
 
@@ -122,10 +149,10 @@ public class ItemListFragment extends Fragment {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-
                 if (lastItem == recyclerView.getAdapter().getItemCount() - 1 && newState == RecyclerView.SCROLL_STATE_IDLE ) {
                     isLoad = true;
-                    ((SimpleItemRecyclerViewAdapter)recyclerView.getAdapter()).loadMore();
+
+                    mAdapter.loadMore();
                 }
                 // To update the pre-layout list.
                 recyclerView.getAdapter().notifyDataSetChanged();
@@ -145,7 +172,26 @@ public class ItemListFragment extends Fragment {
             mnewsList = newsList;
         }
 
-        public void loadMore() { mnewsList.loadMore(); Log.v("!!!", String.valueOf(mnewsList.size()));}
+        public void loadMore() {
+            // This is the caller for the url connection. New thread:
+            Log.d("list","load more");
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    Log.d("list","new thread "+mnewsList.classTag);
+                    if (mnewsList.loadMore() == true)
+                    {
+                        Message msg = new Message();
+                        msg.what = 1;
+
+                        mHandler.sendMessage(msg);
+                    }
+
+                }
+            });
+            thread.start();
+        }
+
 
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -158,6 +204,16 @@ public class ItemListFragment extends Fragment {
         public void onBindViewHolder(final ViewHolder holder, int position) {
             holder.mItem = mnewsList.get(position);
             //holder.mIdView.setText(mnewsList.get(position).id);
+
+            //看过的页面灰色
+            if (holder.mItem.isRead) {
+                holder.mContentView.setTextColor(Color.GRAY);
+                Log.d("debug","isread");
+            } else {
+                holder.mContentView.setTextColor(Color.BLACK);
+                Log.d("debug","not " + holder.mItem.content);
+            }
+
             if(!holder.mItem.picture_id.isEmpty())
             {
                 Glide.with(getContext()).load(holder.mItem.picture_id.get(0)).placeholder(R.drawable.ic_launcher).into(holder.mImageView);
@@ -173,6 +229,7 @@ public class ItemListFragment extends Fragment {
                     Intent intent = new Intent(context, ItemDetailActivity.class);
                     intent.putExtra(ItemDetailFragment.ARG_ITEM_ID, holder.mItem.news_id);
 
+                    holder.mItem.markRead();
                     context.startActivity(intent);
                 }
             });

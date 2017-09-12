@@ -58,7 +58,7 @@
             android:name=".DragTabActivity"
             android:label="@string/app_name"
             android:parentActivityName=".ItemListActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/DialogTheme">
 
 
         </activity>

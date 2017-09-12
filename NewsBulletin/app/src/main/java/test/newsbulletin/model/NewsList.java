@@ -71,12 +71,10 @@ public class NewsList {
     }
 
     public NewsList() {
-        loadMore();
     }
     public NewsList(String classTag) {
         Log.d("func", classTag);
         this.classTag = classTag;
-        loadMore();
     }
     public NewsListItem get(int i) {
         if (i < newsList.size()) return newsList.get(i);
@@ -86,102 +84,72 @@ public class NewsList {
     public int size() {
         return newsList.size();
     }
-    public synchronized void loadMore(){
+    public synchronized boolean loadMore(){
         /* Not do this in our main thread. */
         Log.d("func", "loading page " + pageNumber + ". " + "Size: " + newsList.size());
-        final NewsList newsListThis = this;
-        Thread thread=new Thread(new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                Log.d("func","begin thread" +
-                        "");
-                int resCode = -1;
-                String required_url = getSpecificPageUrl(pageNumber, classTag);
-                Log.d("func",required_url);
-                try {
+        Log.d("func","begin thread");
+        Log.d("func","begin thread" +
+                "");
+        int resCode = -1;
+        String required_url = getSpecificPageUrl(pageNumber, classTag);
+        Log.d("func",required_url);
+        try {
                     /* Open the url */
-                    URL url = new URL(required_url);
+            URL url = new URL(required_url);
 
-                    HttpURLConnection cnt = (HttpURLConnection)url.openConnection();
-                    cnt.setRequestMethod("GET");
-                    cnt.setConnectTimeout(5*1000);
+            HttpURLConnection cnt = (HttpURLConnection)url.openConnection();
+            cnt.setRequestMethod("GET");
+            cnt.setConnectTimeout(5*1000);
 
-                    InputStream in = cnt.getInputStream();
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+            InputStream in = cnt.getInputStream();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 
                     /* Get all the content of the html */
-                    String html = "";
-                    {
-                        String line;
-                        while ((line = reader.readLine()) != null) {
-                            html += line;
-                        }
-                    }
-
-                    resCode = cnt.getResponseCode();
-
-
-                    if (resCode == HttpURLConnection.HTTP_OK) {
-                        Log.d("func","" + resCode);
-                        JSONObject js_obj = new JSONObject(html);
-                        JSONArray news_list = js_obj.getJSONArray("list");
-                        Log.v("!!!", String.valueOf(news_list.length()));
-                        for (int i = 0; i < news_list.length(); i++) {
-                            JSONObject obj = news_list.getJSONObject(i);
-                            String tmp = obj.getString("news_Pictures");
-                            String[] mm = tmp.split("[ ;]");
-                            List<String> picture_url = new ArrayList<String>();
-                            for (int j=0; j<mm.length; j++)
-                            {
-                                Log.d("check",mm[j] );
-                                picture_url.add(mm[j]);
-                            }
-                            Log.d("check","????" );
-                            addItem(new NewsListItem(String.valueOf(newsList.size()),obj.getString("news_Title"),obj.getString("news_ID"),picture_url));
-                        }
-
-                        if (news_list.length() != 0) {
-                            pageNumber += 1;
-                        }
-                        io.saveNewsList(newsListThis);
-                    }
-                    else
-                    {
-                        // when connection fails
-                        io.loadNewsList(newsListThis);
-                    }
-
-
-                }
-
-                catch (MalformedURLException eurl){
-                    io.loadNewsList(newsListThis);
-                    Log.d("func","url error");
-
-                } catch (IOException eio) {
-                    io.loadNewsList(newsListThis);
-                    eio.printStackTrace();
-                    Log.d("func","io error "+eio.getMessage());
-
-                } catch (JSONException ejson) {
-                    io.loadNewsList(newsListThis);
-                    Log.d("func","json error "+ ejson.getMessage());
-
-                } catch (Exception eso) {
-                    io.loadNewsList(newsListThis);
-                    Log.d("func", eso.getMessage());
+            String html = "";
+            {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    html += line;
                 }
             }
-        });
-        thread.start();
 
+            //ToDo(aokireiko):judge when the connection fails.
+            resCode = cnt.getResponseCode();
 
-        Log.d("func", "http finished");
+            if (resCode == HttpURLConnection.HTTP_OK) {
+                Log.d("func","" + resCode);
+            }
+
+            JSONObject js_obj = new JSONObject(html);
+            JSONArray news_list = js_obj.getJSONArray("list");
+            Log.v("!!!", String.valueOf(news_list.length()));
+            for (int i = 0; i < news_list.length(); i++) {
+                JSONObject obj = news_list.getJSONObject(i);
+                String tmp = obj.getString("news_Pictures");
+                String[] mm = tmp.split("[ ;]");
+                List<String> picture_url = new ArrayList<String>();
+                for (int j=0; j<mm.length; j++)
+                {
+                    Log.d("check",mm[j] );
+                    picture_url.add(mm[j]);
+                }
+                Log.d("check","????" );
+                addItem(new NewsListItem(String.valueOf(newsList.size()),obj.getString("news_Title"),obj.getString("news_ID"),picture_url));
+            }
+
+            if (news_list.length() != 0) {
+                pageNumber += 1;
+            }
+            io.saveNewsList(newsListThis);
+            return true;
+
+        } catch (Exception eso) {
+            Log.d("func", eso.getMessage());
+            if(io.loadNewsList(newsListThis))
+                return true;
+            return false;
+        }
         // Add some sample items.
-
-
     }
     private void addItem(NewsListItem item) {
         newsList.add(item);

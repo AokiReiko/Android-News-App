@@ -1,10 +1,16 @@
 package test.newsbulletin.model;
 import android.app.Application;
+import android.util.Log;
 
 import com.iflytek.cloud.SpeechUtility;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
+import android.support.v4.app.Fragment;
+
+import java.util.Map;
+
 import android.util.Log;
 import test.newsbulletin.R;
 import test.newsbulletin.file.FileIO;
@@ -12,6 +18,7 @@ import test.newsbulletin.file.FileIO;
 /**
  * Created by 32928 on 2017/9/9.
  */
+
 
 public class Data extends Application {
     public static boolean if_pic = true;
@@ -23,6 +30,9 @@ public class Data extends Application {
 
     public ArrayList<String> getTabList() { return tabList; }
     public ArrayList<String> getUnusedTabList() { return unusedTabList; }
+    public boolean tabChanged = true;
+
+    public Map<String, Fragment> savedFragments = new HashMap<>();
 
     boolean isSpeechEnable = true;
 
@@ -33,13 +43,13 @@ public class Data extends Application {
         // TODO Auto-generated method stub
         super.onCreate();
         FileIO.application = this;
+        buildTabList();
         Log.v("checkit",unusedTabList.toString());
         if(isSpeechEnable) {
             SpeechUtility.createUtility(this, "appid=" + getString(R.string.app_id));
         }
     }
-    public void  buildTabList() {
-
+    private void buildTabList() {
         // ToDo(zps):if there is config file, read it.
         tabList.add("最新");
         tabList.add("国内");
@@ -55,7 +65,9 @@ public class Data extends Application {
         unusedTabList.add("文化");
         unusedTabList.add("教育");
         unusedTabList.add("健康");
+        Log.d("list","build tab list");
     }
+    public void setTabChanged(boolean state) { tabChanged = state; }
 
 }
 

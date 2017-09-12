@@ -74,7 +74,7 @@ public class UnsignedAdapter extends BaseUnsignedAdapter<String, DragViewHolder>
     public void setHanZiDatas(List<String> datas) {
         mDatas.clear();
         mDatas.addAll(datas);
-        Collections.sort(mDatas, new HanZiComparator());
+        //Collections.sort(mDatas, new HanZiComparator());
         notifyDataSetChanged();
     }
 
