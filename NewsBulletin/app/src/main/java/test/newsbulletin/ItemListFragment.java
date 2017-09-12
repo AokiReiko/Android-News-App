@@ -2,6 +2,7 @@ package test.newsbulletin;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -100,7 +101,9 @@ public class ItemListFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        Log.d("debug","resume");
         scrollToPosition();
+        mAdapter.notifyDataSetChanged();
     }
 
 
@@ -108,6 +111,7 @@ public class ItemListFragment extends Fragment {
         if(((RecyclerView)recyclerView).getLayoutManager() != null && lastPosition >= 0) {
             ((LinearLayoutManager) ((RecyclerView)recyclerView).getLayoutManager()).scrollToPositionWithOffset(lastPosition, lastOffset);
         }
+
     }
 
     private void getPositionAndOffset() {
@@ -126,7 +130,6 @@ public class ItemListFragment extends Fragment {
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
         recyclerView.setAdapter(mAdapter);
-        Log.d("list","set rv"+mAdapter.mnewsList.size());
 
         recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext()));
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -147,7 +150,6 @@ public class ItemListFragment extends Fragment {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-                Log.d("list",mAdapter.mnewsList.toString());
                 if (lastItem == recyclerView.getAdapter().getItemCount() - 1 && newState == RecyclerView.SCROLL_STATE_IDLE ) {
                     isLoad = true;
 
@@ -203,6 +205,16 @@ public class ItemListFragment extends Fragment {
         public void onBindViewHolder(final ViewHolder holder, int position) {
             holder.mItem = mnewsList.get(position);
             //holder.mIdView.setText(mnewsList.get(position).id);
+
+            //看过的页面灰色
+            if (holder.mItem.isRead) {
+                holder.mContentView.setTextColor(Color.GRAY);
+                Log.d("debug","isread");
+            } else {
+                holder.mContentView.setTextColor(Color.BLACK);
+                Log.d("debug","not " + holder.mItem.content);
+            }
+
             if(!holder.mItem.picture_id.isEmpty())
             {
                 Glide.with(getContext()).load(holder.mItem.picture_id.get(0)).placeholder(R.drawable.ic_launcher).into(holder.mImageView);
@@ -218,6 +230,7 @@ public class ItemListFragment extends Fragment {
                     Intent intent = new Intent(context, ItemDetailActivity.class);
                     intent.putExtra(ItemDetailFragment.ARG_ITEM_ID, holder.mItem.news_id);
 
+                    holder.mItem.markRead();
                     context.startActivity(intent);
                 }
             });
