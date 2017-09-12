@@ -121,9 +121,9 @@ public class FileIO
             dir.delete();
     }
 
-    public boolean isDetailSaved(DetailList list) // 是否收藏了某条新闻
+    public boolean isDetailSaved(DetailContent list) // 是否收藏了某条新闻
     {
-        String id = list.pageID;
+        String id = list.detailID;
         File path = application.getFilesDir();
         File dir = new File(path, "Detail/" + id + ".detail");
         return dir.isFile();

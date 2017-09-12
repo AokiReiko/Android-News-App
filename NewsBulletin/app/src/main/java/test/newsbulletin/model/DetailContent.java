@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.net.HttpURLConnection;
 
+import test.newsbulletin.file.FileIO;
 import test.newsbulletin.model.NewsList;
 
 /**
@@ -38,6 +39,8 @@ public class DetailContent {
     public DetailContent(String detail_id) {
         detailID = detail_id;
     }
+    FileIO io = new FileIO();
+
     public synchronized boolean loadMore() {
         /* Not do this in our main thread. */
         // 在调用此函数的caller里面开启线程
@@ -79,22 +82,16 @@ public class DetailContent {
             detailItem = (new NewsDetailItem(detailID, js_obj.getString("news_Title"), js_obj.getString("news_Author"), js_obj.getString("news_Content"), picture_url));
             return true;
 
-        } catch (MalformedURLException eurl){
-            Log.d("func","url error");
-            return false;
-
-        } catch (IOException eio) {
-            eio.printStackTrace();
-            Log.d("func","io error "+eio.getMessage());
-            return false;
-
-        } catch (JSONException ejson) {
-            Log.d("func","json error "+ ejson.getMessage());
-            return false;
-
         } catch (Exception eso) {
-            Log.d("func", eso.getMessage());
-            return false;
+            if(io.loadDetail(this))
+                return true;
+            else
+            {
+                List<String> list = new ArrayList<>();
+                list.add("disconnect");
+                detailItem = new NewsDetailItem("-1", "连接错误", "", "网络未连接，且文件未缓存", list);
+                return true;
+            }
         }
 
         // Add some sample items.

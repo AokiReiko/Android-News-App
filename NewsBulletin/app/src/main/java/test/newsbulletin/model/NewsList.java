@@ -140,12 +140,12 @@ public class NewsList {
             if (news_list.length() != 0) {
                 pageNumber += 1;
             }
-            io.saveNewsList(newsListThis);
+            io.saveNewsList(this);
             return true;
 
         } catch (Exception eso) {
             Log.d("func", eso.getMessage());
-            if(io.loadNewsList(newsListThis))
+            if(io.loadNewsList(this))
                 return true;
             return false;
         }
