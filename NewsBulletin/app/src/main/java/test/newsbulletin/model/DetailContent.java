@@ -79,7 +79,9 @@ public class DetailContent {
                 Log.d("check",pics[i] );
                 picture_url.add(pics[i]);
             }
-            detailItem = (new NewsDetailItem(detailID, js_obj.getString("news_Title"), js_obj.getString("news_Author"), js_obj.getString("news_Content"), picture_url));
+            detailItem = (new NewsDetailItem(detailID, js_obj.getString("news_Title"),
+                    js_obj.getString("news_Author"), js_obj.getString("news_Content"),
+                    picture_url, js_obj.getString("news_URL")));
             return true;
 
         } catch (Exception eso) {
@@ -89,7 +91,7 @@ public class DetailContent {
             {
                 List<String> list = new ArrayList<>();
                 list.add("disconnect");
-                detailItem = new NewsDetailItem("-1", "连接错误", "", "网络未连接，且文件未缓存", list);
+                detailItem = new NewsDetailItem("-1", "连接错误", "", "网络未连接，且文件未缓存", list, "");
                 return true;
             }
         }
@@ -106,13 +108,15 @@ public class DetailContent {
         public final String Author;
         public final String Content;
         public final List<String> Picture;
+        public final String news_url;
 
-        public NewsDetailItem(String id, String title, String author, String content, List<String> picture) {
+        public NewsDetailItem(String id, String title, String author, String content, List<String> picture, String url) {
             this.id = id;
             this.Title = title;
             this.Author = author;
             this.Content = content;
             this.Picture = picture;
+            this.news_url = url;
         }
 
         @Override

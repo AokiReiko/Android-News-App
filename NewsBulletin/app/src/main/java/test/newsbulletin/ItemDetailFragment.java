@@ -85,7 +85,7 @@ public class ItemDetailFragment extends Fragment {
 
             loadDetail();
 
-            // zps: 这里的多线程是否有问题？
+
             loadImageThread=new Thread(new Runnable(){
                 @Override
                 public void run() {
@@ -131,10 +131,6 @@ public class ItemDetailFragment extends Fragment {
 
 
         // Show the dummy content as text in a TextView.
-        try {
-            loadImageThread.join();
-        }
-        catch(Exception e){}
         setUI();
         Log.v("layout","!!!");
         return rootView;

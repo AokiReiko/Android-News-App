@@ -3,11 +3,14 @@ package test.newsbulletin;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.util.Log;
 import android.view.View;
 import android.support.v7.app.AppCompatActivity;
@@ -18,7 +21,17 @@ import android.view.Menu;
 import android.support.v7.widget.ShareActionProvider;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.tencent.mm.sdk.openapi.SendMessageToWX;
+import com.tencent.mm.sdk.openapi.WXMediaMessage;
+import com.tencent.mm.sdk.openapi.WXWebpageObject;
+
+import java.io.File;
+
+import test.newsbulletin.model.Data;
 import test.newsbulletin.model.DetailContent;
+import test.newsbulletin.model.NewsList;
+import test.newsbulletin.model.PictureParser;
 import test.newsbulletin.speech.SpeechGenerator;
 
 /**
@@ -28,9 +41,11 @@ import test.newsbulletin.speech.SpeechGenerator;
  * in a {@link ItemListActivity}.
  */
 public class ItemDetailActivity extends AppCompatActivity {
+
     boolean isSpeechActive = false, isSpeechStart = false;
     SpeechGenerator generator = null;
     ItemDetailFragment fragment = null;
+
     private ShareActionProvider mShareUtil;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,14 +95,14 @@ public class ItemDetailActivity extends AppCompatActivity {
                 {
                     isSpeechActive = isSpeechStart = true;
 
-                    DetailContent.NewsDetailItem item = fragment.mDetail.detailItem;
+                    /*DetailContent.NewsDetailItem item = fragment.mDetail.detailItem;
                     String str_read = item.Title + "。作者：" + item.Author + "。" + item.Content;
                     Log.d("speech","speak 1:" + str_read);
 
                     generator = new SpeechGenerator(str_read, this_activity);
                     Log.d("speech","speak 1.25:" + generator);
                     generator.start();
-                    Log.d("speech","speak 1.5:" + str_read + this_activity);
+                    Log.d("speech","speak 1.5:" + str_read + this_activity);*/
                 }
                 else if(!isSpeechStart)
                 {
@@ -111,17 +126,7 @@ public class ItemDetailActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu)
     {
         getMenuInflater().inflate(R.menu.share_menu, menu);
-        MenuItem item = menu.findItem(R.id.share);
-        mShareUtil = (ShareActionProvider) MenuItemCompat.getActionProvider((MenuItem) item);
 
-        Intent intent = new Intent(Intent.ACTION_SEND);
-        intent.setType("image/*");intent.getComponent();
-        //intent.setComponent(new ComponentName("com.tencent.mm","com.tencent.mm.ui.tools.ShareToTimeLineUI"));
-        intent.putExtra(Intent.EXTRA_SUBJECT, "Share");
-        intent.putExtra(Intent.EXTRA_TITLE,"Title");
-        intent.putExtra(Intent.EXTRA_TEXT, "I have successfully share my message through my app");
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        setShareIntent(intent);
         return true;
     }
 
@@ -132,34 +137,61 @@ public class ItemDetailActivity extends AppCompatActivity {
             generator.end();
         super.onDestroy();
     }
+
     private Toolbar.OnMenuItemClickListener onMenuItemClick = new Toolbar.OnMenuItemClickListener() {
-    @Override
-  public boolean onMenuItemClick(MenuItem menuItem) {
-    String msg = "";
-    switch (menuItem.getItemId()) {
+        @Override
+        public boolean onMenuItemClick(MenuItem menuItem) {
+            int id = menuItem.getItemId();
 
-      case R.id.share:
-        msg += "Click share";
-        break;
+            if (id == android.R.id.home) {
+                Log.d("func","click home!!");
+                finish();
+                return true;
+            } else if (id == R.id.share_other){
+                Log.d("func","click other!!");
+                return true;
+                //
+            } else {
+                DetailContent.NewsDetailItem item;
+                if (fragment != null && fragment.mDetail != null){
+                    item = fragment.mDetail.detailItem;
+                } else return true;
 
-    }
-    return true;
-  }
+                WXWebpageObject webpage = new WXWebpageObject();
+                webpage.webpageUrl = item.news_url;
+                WXMediaMessage msg = new WXMediaMessage(webpage);
+                msg.title = item.Title;
+                msg.description = item.Content.substring(0,40);
+                if (fragment.mDetail.bitmap != null) {
+                    Bitmap bmp = PictureParser.imageZoom(fragment.mDetail.bitmap);
+                    msg.setThumbImage(bmp);
+
+                }
+                SendMessageToWX.Req req = new SendMessageToWX.Req();
+                req.transaction = "newsBulletin";
+                req.message = msg;
+                switch (id) {
+                    case R.id.share_wx_friend:
+                        req.scene = SendMessageToWX.Req.WXSceneSession;
+                        break;
+                    case R.id.share_wx_line:
+                        req.scene = SendMessageToWX.Req.WXSceneTimeline;
+                        break;
+                    default:
+                        req.scene = SendMessageToWX.Req.WXSceneSession;
+                }
+                Data d = (Data) getApplication();
+                d.api.sendReq(req);
+
+
+
+                return true;
+            }
+        }
     };
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == android.R.id.home) {
-            // This ID represents the Home or Up button. In the case of this
-            // activity, the Up button is shown. Use NavUtils to allow users
-            // to navigate up one level in the application structure. For
-            // more details, see the Navigation pattern on Android Design:
-            //
-            // http://developer.android.com/design/patterns/navigation.html#up-vs-back
-            //
-            finish();
-            return true;
-        }
+
         return super.onOptionsItemSelected(item);
     }
     private void setShareIntent(Intent shareIntent) {

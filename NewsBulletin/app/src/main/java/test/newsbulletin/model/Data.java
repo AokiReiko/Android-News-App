@@ -54,6 +54,7 @@ public class Data extends Application {
         super.onCreate();
         FileIO.application = this;
         buildTabList();
+        registerWeChat(this);
         Log.v("checkit",unusedTabList.toString());
         if(isSpeechEnable) {
             SpeechUtility.createUtility(this, "appid=" + getString(R.string.app_id));
