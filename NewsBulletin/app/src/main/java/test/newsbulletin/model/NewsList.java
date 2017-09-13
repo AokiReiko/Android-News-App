@@ -11,6 +11,7 @@ import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -25,6 +26,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.net.HttpURLConnection;
+
+import test.newsbulletin.file.FileIO;
 
 public class NewsList {
 
@@ -77,6 +80,7 @@ public class NewsList {
         if (i < newsList.size()) return newsList.get(i);
         return null;
     }
+    FileIO io = new FileIO();
     public int size() {
         return newsList.size();
     }
@@ -136,23 +140,13 @@ public class NewsList {
             if (news_list.length() != 0) {
                 pageNumber += 1;
             }
+            io.saveNewsList(this);
             return true;
-
-        } catch (MalformedURLException eurl){
-            Log.d("func","url error");
-            return false;
-
-        } catch (IOException eio) {
-            eio.printStackTrace();
-            Log.d("func","io error "+eio.getMessage());
-            return false;
-
-        } catch (JSONException ejson) {
-            Log.d("func","json error "+ ejson.getMessage());
-            return false;
 
         } catch (Exception eso) {
             Log.d("func", eso.getMessage());
+            if(io.loadNewsList(this))
+                return true;
             return false;
         }
         // Add some sample items.

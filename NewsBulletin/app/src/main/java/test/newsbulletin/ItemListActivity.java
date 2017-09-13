@@ -88,7 +88,7 @@ public class ItemListActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
 
         Log.d("func","main oncreate");
-        io = new FileIO(this);
+        io = new FileIO();
         boolean is_loaded = io.loadConfig();
         if(!is_loaded)
         {

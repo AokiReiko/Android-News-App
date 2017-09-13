@@ -1,6 +1,8 @@
 package test.newsbulletin.file;
 
 import android.app.Activity;
+import android.app.Application;
+import android.graphics.drawable.BitmapDrawable;
 import android.provider.ContactsContract;
 import android.util.Log;
 
@@ -15,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import test.newsbulletin.R;
 import test.newsbulletin.model.Data;
 import test.newsbulletin.model.DetailContent;
 import test.newsbulletin.model.NewsList;
@@ -25,15 +28,13 @@ import test.newsbulletin.model.NewsList;
 
 public class FileIO
 {
-    Activity activity;
+    public static Application application;
 
-    public FileIO(Activity _activity)
-    {
-        activity = _activity;
-    }
+    public FileIO() {}
+
     public void saveConfig() // 存储配置文件
     {
-        File path = activity.getFilesDir();
+        File path = application.getFilesDir();
         File dir = new File(path, "Config");
         if(!dir.isDirectory()) {
             dir.mkdir();
@@ -43,7 +44,7 @@ public class FileIO
         try {
             ByteArrayOutputStream byte_out = new ByteArrayOutputStream();
             ObjectOutputStream object_out = new ObjectOutputStream(byte_out);
-            Data data = (Data) activity.getApplication();
+            Data data = (Data) application;
             object_out.writeObject(data.tabList);
             object_out.writeObject(data.unusedTabList);
             bytes = byte_out.toByteArray();
@@ -67,7 +68,7 @@ public class FileIO
         try {
             ByteArrayInputStream byte_in = new ByteArrayInputStream(bytes);
             ObjectInputStream object_in = new ObjectInputStream(byte_in);
-            data = (Data) activity.getApplication();
+            data = (Data) application;
             object_1 = (Object) object_in.readObject();
             object_2 = (Object) object_in.readObject();
         }
@@ -84,7 +85,7 @@ public class FileIO
 
     public void saveDetail(DetailContent list) // 收藏新闻时调用
     {
-        File path = activity.getFilesDir();
+        File path = application.getFilesDir();
         File dir = new File(path, "Detail");
         if(!dir.isDirectory())
             dir.mkdir();
@@ -113,10 +114,19 @@ public class FileIO
     public void eraseDetail(DetailContent list) // 取消收藏时调用
     {
         String id = list.detailID;
-        File path = activity.getFilesDir();
-        File dir = new File(path, "Details/");
+        File path = application.getFilesDir();
+
+        File dir = new File(path, "Detail/" + id + ".detail");
         if(dir.isFile())
             dir.delete();
+    }
+
+    public boolean isDetailSaved(DetailContent list) // 是否收藏了某条新闻
+    {
+        String id = list.detailID;
+        File path = application.getFilesDir();
+        File dir = new File(path, "Detail/" + id + ".detail");
+        return dir.isFile();
     }
 
     public boolean loadDetail(DetailContent list) // 当某条收藏新闻被加载时调用（离线时调用）
@@ -138,7 +148,7 @@ public class FileIO
     }
     public void saveNewsList(NewsList list) // 存储新闻列表
     {
-        File path = activity.getFilesDir();
+        File path = application.getFilesDir();
         File dir = new File(path, "NewsList");
         if(!dir.isDirectory())
             dir.mkdir();
@@ -183,7 +193,7 @@ public class FileIO
     }
     public void getSavedNewsList(NewsList list) // 获得已收藏新闻列表
     {
-        File path = activity.getFilesDir();
+        File path = application.getFilesDir();
         File dir = new File(path, "Details");
         int num = 0;
         list.newsList.clear();
@@ -212,7 +222,7 @@ public class FileIO
         byte[] buffer = null;
 
         try {
-            File dir = activity.getFilesDir();
+            File dir = application.getFilesDir();
             File sub_dir = new File(dir, filename);
             Log.d("func", sub_dir.toString());
             FileInputStream in = new FileInputStream(sub_dir);
@@ -231,7 +241,7 @@ public class FileIO
     private void writeFile(byte[] bytes, String filename)
     {
         try {
-            File dir = activity.getFilesDir();
+            File dir = application.getFilesDir();
             File sub_dir = new File(dir, filename);
             Log.d("func", sub_dir.toString());
             FileOutputStream out = new FileOutputStream(sub_dir);

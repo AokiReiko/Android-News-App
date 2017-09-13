@@ -87,11 +87,10 @@ public class ItemListFragment extends Fragment {
 
             return recyclerView;
         }
-        mAdapter.loadMore();
+        io = new FileIO();
+        NewsList newsList = new NewsList(getArguments().getString("classTag"));
 
-        io = new FileIO(getActivity());
-        // io.saveNewsList(newsList); // test pass
-        // io.loadNewsList(newsList); // test pass
+        mAdapter.loadMore();
         RecyclerView rv = (RecyclerView) inflater.inflate(
                 R.layout.item_list, container, false);
         setupRecyclerView(rv);

@@ -1,6 +1,7 @@
 package test.newsbulletin;
 
 import android.app.Activity;
+import android.content.res.Resources;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -58,8 +59,6 @@ public class ItemDetailFragment extends Fragment {
     ImageView imageview;
     public DetailContent mDetail;
 
-    FileIO io;
-
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -67,6 +66,8 @@ public class ItemDetailFragment extends Fragment {
     public ItemDetailFragment() {
     }
 
+    FileIO io;
+    Thread loadDetailThread, loadImageThread;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -81,23 +82,34 @@ public class ItemDetailFragment extends Fragment {
             // to load content from a content provider.
 
             mDetail = new DetailContent(getArguments().getString(ARG_ITEM_ID));
+
             loadDetail();
 
-            io = new FileIO(getActivity());
-            // io.saveDetail(mList); // test pass
-            // io.loadDetail(mList); // test pass
-            Thread thread=new Thread(new Runnable(){
+            // zps: 这里的多线程是否有问题？
+            loadImageThread=new Thread(new Runnable(){
                 @Override
                 public void run() {
                     try {
-                        URL url=new URL(mDetail.detailItem.Picture.get(0));
-                        InputStream is= url.openStream();
-                        bitmap = BitmapFactory.decodeStream(is);
-                        is.close();
+                        loadDetailThread.join();
+                        Log.d("func", "disconnect load: " + mDetail.detailItem.Picture);
+                        String str = mDetail.detailItem.Picture.get(0);
+                        if(str == "disconnect")
+                        {
+
+                            Resources res = getResources();
+                            bitmap = BitmapFactory.decodeResource(res, R.drawable.disconnect);
+                        }
+                        else {
+                            URL url = new URL(str);
+                            InputStream is = url.openStream();
+                            bitmap = BitmapFactory.decodeStream(is);
+                            is.close();
+                        }
+
                     } catch (Exception e) {e.printStackTrace();}
                 }
             });
-            thread.start();
+            loadImageThread.start();
 
             CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
             if (appBarLayout != null) {
@@ -114,6 +126,10 @@ public class ItemDetailFragment extends Fragment {
 
 
         // Show the dummy content as text in a TextView.
+        try {
+            loadImageThread.join();
+        }
+        catch(Exception e){}
         setUI();
         Log.v("layout","!!!");
         return rootView;
@@ -125,7 +141,8 @@ public class ItemDetailFragment extends Fragment {
         super.onDestroyView();
     }
     private void loadDetail() {
-        Thread thread = new Thread(new Runnable() {
+
+        loadDetailThread = new Thread(new Runnable() {
             @Override
             public void run() {
                 if (mDetail.loadMore() == true)
@@ -138,7 +155,7 @@ public class ItemDetailFragment extends Fragment {
 
             }
         });
-        thread.start();
+        loadDetailThread.start();
     }
     private void setUI() {
         if (mDetail.detailItem != null) {

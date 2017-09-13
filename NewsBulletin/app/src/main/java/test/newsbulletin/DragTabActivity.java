@@ -19,6 +19,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import test.newsbulletin.file.FileIO;
 import test.newsbulletin.model.Data;
 import z.sye.space.library.DragRecyclerView;
 import z.sye.space.library.UnsignedRecyclerView;
@@ -31,6 +32,7 @@ public class DragTabActivity extends Activity {
     private Button mQuitBtn;
     private UnsignedRecyclerView mUnsignedView;
     private DragRecyclerView mDragView;
+    FileIO io = new FileIO();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,7 +86,7 @@ public class DragTabActivity extends Activity {
                         Log.d("checkit",dragList.get(position));
 
                         dragList.remove(position);
-
+                        io.saveConfig();
                     }
                 })
                 .keepItemCount(2)
@@ -114,7 +116,7 @@ public class DragTabActivity extends Activity {
                         unsignedList.remove(position);
                         mAppData.setTabChanged(true);
                         Log.d("drag",unsignedList.toString());
-
+                        io.saveConfig();
                     }
                 })
                 .build();

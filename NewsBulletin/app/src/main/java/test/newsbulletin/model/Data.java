@@ -7,6 +7,7 @@ import com.iflytek.cloud.SpeechUtility;
 import com.tencent.mm.sdk.openapi.IWXAPI;
 import com.tencent.mm.sdk.openapi.WXAPIFactory;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import android.support.v4.app.Fragment;
@@ -45,10 +46,13 @@ public class Data extends Application {
 
     boolean isSpeechEnable = true;
 
+
     @Override
     public void onCreate() {
+
         // TODO Auto-generated method stub
         super.onCreate();
+        FileIO.application = this;
         buildTabList();
         Log.v("checkit",unusedTabList.toString());
         if(isSpeechEnable) {
