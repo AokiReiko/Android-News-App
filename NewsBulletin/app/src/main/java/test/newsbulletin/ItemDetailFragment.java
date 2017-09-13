@@ -51,7 +51,7 @@ public class ItemDetailFragment extends Fragment {
     Data data;
     public static final String ARG_ITEM_ID = "item_id";
 
-    List<Bitmap> bitmap = new ArrayList<Bitmap>();
+    // List<Bitmap> bitmap = new ArrayList<Bitmap>();
 
     /**
      * The dummy content this fragment is presenting. */
@@ -71,6 +71,8 @@ public class ItemDetailFragment extends Fragment {
     ImageView imageview;
     ImageView view_col ;
     public DetailContent mDetail;
+
+    List<Bitmap> bitmap;
     ImageView imageView_scroll;
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -94,9 +96,8 @@ public class ItemDetailFragment extends Fragment {
             // to load content from a content provider.
 
             mDetail = new DetailContent(getArguments().getString(ARG_ITEM_ID));
-
+            bitmap = mDetail.bitmap;
             loadDetail();
-
 
             loadImageThread=new Thread(new Runnable(){
                 @Override
@@ -105,7 +106,7 @@ public class ItemDetailFragment extends Fragment {
                         loadDetailThread.join();
                         tmp_if = false;
 
-                        if(mDetail.bitmap != null)
+                        if(mDetail.bitmap.size() != 0)
                             return;
 
                         Log.d("func", "disconnect load: " + mDetail.detailItem.Picture);
@@ -184,6 +185,7 @@ public class ItemDetailFragment extends Fragment {
         loadDetailThread = new Thread(new Runnable() {
             @Override
             public void run() {
+
                 if (mDetail.loadMore() == true)
                 {
                     Message msg = new Message();

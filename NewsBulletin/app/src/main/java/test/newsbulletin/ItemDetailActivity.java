@@ -102,14 +102,14 @@ public class ItemDetailActivity extends AppCompatActivity {
                 {
                     isSpeechActive = isSpeechStart = true;
 
-                    /*DetailContent.NewsDetailItem item = fragment.mDetail.detailItem;
+                    DetailContent.NewsDetailItem item = fragment.mDetail.detailItem;
                     String str_read = item.Title + "。作者：" + item.Author + "。" + item.Content;
                     Log.d("speech","speak 1:" + str_read);
 
                     generator = new SpeechGenerator(str_read, this_activity);
                     Log.d("speech","speak 1.25:" + generator);
                     generator.start();
-                    Log.d("speech","speak 1.5:" + str_read + this_activity);*/
+                    Log.d("speech","speak 1.5:" + str_read + this_activity);
                 }
                 else if(!isSpeechStart)
                 {
@@ -171,6 +171,7 @@ public class ItemDetailActivity extends AppCompatActivity {
                 return true;
                 //
             } else if (id == R.id.collect) {
+                Log.d("func", "collecttttttttttttt");
                 FileIO io = new FileIO();
                 io.saveDetail(fragment.mDetail);
                 return true;
@@ -186,7 +187,7 @@ public class ItemDetailActivity extends AppCompatActivity {
                 msg.title = item.Title;
                 msg.description = item.Content.substring(0,40);
                 if (fragment.mDetail.bitmap != null) {
-                    Bitmap bmp = PictureParser.imageZoom(fragment.mDetail.bitmap);
+                    Bitmap bmp = PictureParser.imageZoom(fragment.mDetail.bitmap.get(0));
                     msg.setThumbImage(bmp);
 
                 }
