@@ -40,7 +40,7 @@ public class ItemDetailFragment extends Fragment {
      * represents.
      */
     public static final String ARG_ITEM_ID = "item_id";
-    Bitmap bitmap;
+
     /**
      * The dummy content this fragment is presenting. */
     View rootView;
@@ -91,20 +91,22 @@ public class ItemDetailFragment extends Fragment {
                 public void run() {
                     try {
                         loadDetailThread.join();
+                        if(mDetail.bitmap != null)
+                            return;
                         Log.d("func", "disconnect load: " + mDetail.detailItem.Picture);
                         String str = mDetail.detailItem.Picture.get(0);
                         if(str == "disconnect")
                         {
-
                             Resources res = getResources();
-                            bitmap = BitmapFactory.decodeResource(res, R.drawable.disconnect);
+                            mDetail.bitmap = BitmapFactory.decodeResource(res, R.drawable.disconnect);
                         }
                         else {
                             URL url = new URL(str);
                             InputStream is = url.openStream();
-                            bitmap = BitmapFactory.decodeStream(is);
+                            mDetail.bitmap = BitmapFactory.decodeStream(is);
                             is.close();
                         }
+                        io = new FileIO();
 
                     } catch (Exception e) {e.printStackTrace();}
                 }
@@ -172,8 +174,8 @@ public class ItemDetailFragment extends Fragment {
             ((ImageView) rootView.findViewById(R.id.news_image)).setMaxWidth(screenWidth);
             ((ImageView) rootView.findViewById(R.id.news_image)).setMaxHeight(screenWidth * 5);
             ((ImageView) rootView.findViewById(R.id.news_image)).setMinimumHeight(screenWidth * 0);
-            if (bitmap != null && !bitmap.isRecycled() && Data.if_pic) {
-                ((ImageView) rootView.findViewById(R.id.news_image)).setImageBitmap(bitmap);
+            if (mDetail.bitmap != null && !mDetail.bitmap.isRecycled() && Data.if_pic) {
+                ((ImageView) rootView.findViewById(R.id.news_image)).setImageBitmap(mDetail.bitmap);
             }
         }
     }

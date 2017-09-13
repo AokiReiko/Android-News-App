@@ -1,4 +1,5 @@
 package test.newsbulletin.model;
+import android.graphics.Bitmap;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -98,7 +99,7 @@ public class DetailContent {
 
 
     }
-
+    public Bitmap bitmap = null;
 
     public static class NewsDetailItem implements Serializable{
         public final String id;
@@ -113,7 +114,6 @@ public class DetailContent {
             this.Author = author;
             this.Content = content;
             this.Picture = picture;
-
         }
 
         @Override

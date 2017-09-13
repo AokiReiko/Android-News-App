@@ -145,6 +145,7 @@ public class NewsList {
 
         } catch (Exception eso) {
             Log.d("func", eso.getMessage());
+
             if(io.loadNewsList(this))
                 return true;
             return false;
