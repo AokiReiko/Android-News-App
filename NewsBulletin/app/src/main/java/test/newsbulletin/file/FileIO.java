@@ -85,7 +85,7 @@ public class FileIO
         return true;
     }
 
-    public void saveDetail(DetailContent list) // 收藏新闻时调用
+    public boolean saveDetail(DetailContent list) // 收藏新闻时调用
     {
         File path = application.getFilesDir();
         File dir = new File(path, "Detail");
@@ -108,10 +108,12 @@ public class FileIO
         catch(Exception e)
         {
             Log.d("func", "detail save failed");
-            return;
+            e.printStackTrace();
+            return false;
         }
         writeFile(bytes, filename);
         Log.d("func", "detail save finished");
+        return true;
     }
 
     public void eraseDetail(String newsId) // 取消收藏时调用
@@ -208,6 +210,7 @@ public class FileIO
         if (!dir.isDirectory()) {
             dir.mkdir();
         }
+        Log.d("func", "file list"+dir.listFiles().length + " ");
         list.newsList.clear();
         list.newsMap.clear();
         for(File file : dir.listFiles())

@@ -172,7 +172,9 @@ public class ItemDetailActivity extends AppCompatActivity {
                 //
             } else if (id == R.id.collect) {
                 FileIO io = new FileIO();
-                io.saveDetail(fragment.mDetail);
+                if (!io.saveDetail(fragment.mDetail))
+                    Log.d("final","fail");
+                Log.d("final","save file");
                 return true;
             } else{
                 DetailContent.NewsDetailItem item;
