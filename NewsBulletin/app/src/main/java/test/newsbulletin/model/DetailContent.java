@@ -91,7 +91,7 @@ public class DetailContent {
             {
                 List<String> list = new ArrayList<>();
                 list.add("disconnect");
-                detailItem = new NewsDetailItem("-1", "连接错误", "", "网络未连接，且文件未缓存", list, "");
+                detailItem = new NewsDetailItem("-1", "连接错误", "", "网络未连接，且文件未缓存", list, " ");
                 return true;
             }
         }
