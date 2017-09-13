@@ -1,45 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/lineout"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    tools:context="test.newsbulletin.ItemDetailFragment"
-    android:orientation="vertical">
+        xmlns:tools="http://schemas.android.com/tools"  
+        android:layout_width="match_parent"  
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:context="test.newsbulletin.ItemDetailActivity" >
+      
 
-    <TextView
-        android:id="@+id/item_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@color/Text_Color"
-        android:textAppearance="?attr/textAppearanceListItem" />
 
-    <TextView
-        android:id="@+id/item_author"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@color/Text_Color"
-        android:layout_margin="2dp"
-        android:gravity="left"
-        android:padding="2dp"
-        android:textAppearance="?attr/textAppearanceListItem" />
-    <ImageView
-        android:id="@+id/news_image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:textColor="@color/Text_Color"
-        android:layout_margin="5dp"
-        android:scaleType="fitCenter"
-        android:adjustViewBounds="true"
-        android:textAppearance="?attr/textAppearanceListItem" />
-    <TextView
-        android:id="@+id/item_detail"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@color/Text_Color"
-        android:padding="10dp"
-        android:gravity="left"
-        android:layout_margin="10dp"
-        android:textAppearance="?attr/textAppearanceListItem" />
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/lineout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:context="test.newsbulletin.ItemDetailFragment"
+            android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/item_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:padding="30dp"
+            android:gravity="center"
+            android:textColor="@color/Text_Color"
+            android:textStyle="bold"
+            android:textSize="25dp"
+            android:textAppearance="?attr/textAppearanceListItem" />
+        <TextView
+            android:id="@+id/line"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/Line_color"
+            android:text="----------------------------------------------------------------"
+            android:textAlignment="center"
+            android:textAppearance="?attr/textAppearanceListItem" />
+         <android.support.v4.view.ViewPager
+             android:id="@+id/viewPager"
+              android:layout_width="wrap_content"
+              android:layout_height="200dip"
+             />
+        <TextView
+            android:id="@+id/item_author"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/Text_Color"
+            android:layout_margin="2dp"
+            android:gravity="right"
+            android:padding="2dp"
+            android:textAppearance="?attr/textAppearanceListItem" />
+        <TextView
+            android:id="@+id/item_detail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/Text_Color"
+            android:padding="10dp"
+            android:gravity="left"
+            android:layout_margin="10dp"
+            android:textAppearance="?attr/textAppearanceListItem" />
 </LinearLayout>
+ </LinearLayout>

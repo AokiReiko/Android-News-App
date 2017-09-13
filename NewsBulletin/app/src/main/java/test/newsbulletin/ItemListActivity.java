@@ -241,6 +241,14 @@ public class ItemListActivity extends AppCompatActivity
                                 Intent intent_collec = new Intent(mDrawerLayout.getContext(), CollectionActivity.class);
                                 startActivity(intent_collec);
                                 break;
+                            case R.id.pic_yes:
+                                data.if_pic = true;
+                                Log.d("func", "nav_tag" +
+                                        "");
+                                break;
+                            case R.id.pic_np:
+                                data.if_pic = false;
+                                break;
                             default:
                                 break;
                         }
