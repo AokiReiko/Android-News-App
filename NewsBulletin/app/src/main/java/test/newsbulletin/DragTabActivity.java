@@ -37,35 +37,24 @@ public class DragTabActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("func","drag create");
 
         setContentView(R.layout.drag_content);
-        Log.d("func","0");
-        //setSupportActionBar(toolbar);
-        Log.d("func","1");
         final List<String> dragList;
         final Data mAppData = (Data) getApplication();
         //dragList = getIntent().getStringArrayListExtra("TAB_LIST");
         dragList = mAppData.getTabList();
-        Log.d("list",dragList.toString());
-        Toast.makeText(DragTabActivity.this,
-                dragList.toString(), Toast.LENGTH_SHORT).show();
-        Log.v("checkit", String.valueOf(dragList.size()));
 
         final List<String> unsignedList;
         //unsignedList = getIntent().getStringArrayListExtra("UNUSED_TAB_LIST");
         unsignedList = mAppData.getUnusedTabList();
-        Log.v("checkit", String.valueOf(unsignedList.size()));
 
 
         mDragView = (DragRecyclerView) findViewById(R.id.dragView);
-        Log.d("func","2");
         mDragView.datas(dragList)
                 .onItemClick(new OnItemClickListener() {
                     @Override
                     public void onItemClick(RecyclerView.ViewHolder holder, int position) {
-                        Toast.makeText(DragTabActivity.this,
-                                "position" + position + "has been clicked", Toast.LENGTH_SHORT).show();
+
                     }
                 })
                 .onLongPress(new OnLongPressListener() {
@@ -77,13 +66,10 @@ public class DragTabActivity extends Activity {
                 .onItemRemoved(new OnItemRemovedListener<String>() {
                     @Override
                     public void onItemRemoved(int position, String removedItem) {
-                        Toast.makeText(DragTabActivity.this,
-                                "position" + position + "has been removed " + dragList.get(position), Toast.LENGTH_SHORT).show();
-                        Log.d("drag","drag:"+dragList.toString());
+
                         mUnsignedView.addItem(removedItem);
                         unsignedList.add(dragList.get(position));
                         mAppData.setTabChanged(true);
-                        Log.d("checkit",dragList.get(position));
 
                         dragList.remove(position);
                         io.saveConfig();
@@ -109,13 +95,10 @@ public class DragTabActivity extends Activity {
                 .onItemRemoved(new OnItemRemovedListener<String>() {
                     @Override
                     public void onItemRemoved(int position, String removedItem) {
-                        Toast.makeText(DragTabActivity.this,
-                                "position" + position + "has been added " + unsignedList.get(position), Toast.LENGTH_SHORT).show();
                         mDragView.addItem(removedItem);
                         dragList.add(unsignedList.get(position));
                         unsignedList.remove(position);
                         mAppData.setTabChanged(true);
-                        Log.d("drag",unsignedList.toString());
                         io.saveConfig();
                     }
                 })

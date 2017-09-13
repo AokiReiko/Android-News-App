@@ -18,7 +18,7 @@
         <item
             android:id="@+id/share_other"
             android:orderInCategory="90"
-            android:title="分享到其他"
+            android:title="分享到微博"
             app:showAsAction="never" />
 
 

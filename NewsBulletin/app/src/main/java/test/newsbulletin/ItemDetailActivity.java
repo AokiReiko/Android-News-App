@@ -104,12 +104,9 @@ public class ItemDetailActivity extends AppCompatActivity {
 
                     DetailContent.NewsDetailItem item = fragment.mDetail.detailItem;
                     String str_read = item.Title + "。作者：" + item.Author + "。" + item.Content;
-                    Log.d("speech","speak 1:" + str_read);
 
                     generator = new SpeechGenerator(str_read, this_activity);
-                    Log.d("speech","speak 1.25:" + generator);
                     generator.start();
-                    Log.d("speech","speak 1.5:" + str_read + this_activity);
                 }
                 else if(!isSpeechStart)
                 {
@@ -151,11 +148,9 @@ public class ItemDetailActivity extends AppCompatActivity {
             int id = menuItem.getItemId();
 
             if (id == android.R.id.home) {
-                Log.d("func","click home!!");
                 finish();
                 return true;
             } else if (id == R.id.share_other){
-                Log.d("func","click other!!");
 
                 WeiboMessage weiboMessage = new WeiboMessage();
                 ImageObject imageObject = new ImageObject();
@@ -166,12 +161,10 @@ public class ItemDetailActivity extends AppCompatActivity {
                 request.transaction = String.valueOf(System.currentTimeMillis());
                 request.message = weiboMessage;
                 Data d = (Data) getApplication();
-                Log.d("func","weibo");
                 d.weibo_api.sendRequest(request);
                 return true;
                 //
             } else if (id == R.id.collect) {
-                Log.d("func", "collecttttttttttttt");
                 FileIO io = new FileIO();
                 if (!io.saveDetail(fragment.mDetail))
                     Log.d("final","fail");

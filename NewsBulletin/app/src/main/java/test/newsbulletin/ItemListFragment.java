@@ -218,12 +218,6 @@ public class ItemListFragment extends Fragment {
                             return false;
                         }
                     });
-                    menu.add(0, 1, 0, "删除").setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-                        @Override
-                        public boolean onMenuItemClick(MenuItem menuItem) {
-                            return false;
-                        }
-                    });
 
                 }
             });

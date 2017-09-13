@@ -241,6 +241,10 @@ public class ItemListActivity extends AppCompatActivity
                                 Intent intent_collec = new Intent(mDrawerLayout.getContext(), CollectionActivity.class);
                                 startActivity(intent_collec);
                                 break;
+                            case R.id.nav_discussion:
+                                Toast.makeText(ItemListActivity.this,
+                                        "队长联系方式:\n13020025218\n微信号: reikolikeherself", Toast.LENGTH_SHORT).show();
+                                break;
                             case R.id.pic_yes:
                                 data.if_pic = true;
                                 Log.d("func", "nav_tag" +
@@ -299,9 +303,6 @@ public class ItemListActivity extends AppCompatActivity
                 return true;
             case R.id.nav_discussion:
                 Log.d("func", "discuss");
-                break;
-            case R.id.nav_friends:
-                Log.d("func", "friends");
                 break;
         }
         return super.onOptionsItemSelected(item);
