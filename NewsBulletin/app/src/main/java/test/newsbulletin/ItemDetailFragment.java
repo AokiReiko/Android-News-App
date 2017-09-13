@@ -105,6 +105,10 @@ public class ItemDetailFragment extends Fragment {
                             bitmap = BitmapFactory.decodeStream(is);
                             is.close();
                         }
+                        Message msg = new Message();
+                        msg.what = 1;
+
+                        mHandler.sendMessage(msg);
 
                     } catch (Exception e) {e.printStackTrace();}
                 }

@@ -21,6 +21,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.LinearLayoutManager;
@@ -99,7 +100,6 @@ public class ItemListActivity extends AppCompatActivity
         data = (Data) getApplication();
         data.setTabChanged(true);
 
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         if (navigationView != null) {
             setupDrawerContent(navigationView);
@@ -110,6 +110,10 @@ public class ItemListActivity extends AppCompatActivity
         toolbar.setTitle(getTitle());
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar, R.string.action_edit, R.string.action_edit);
+        mDrawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 
         buildTabList();
