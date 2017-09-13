@@ -1,7 +1,5 @@
 package test.newsbulletin;
 
-import android.app.Activity;
-import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
@@ -11,13 +9,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,90 +26,62 @@ import com.bumptech.glide.Glide;
 import java.util.List;
 import java.util.logging.LogRecord;
 
-import test.newsbulletin.dummy.DummyContent;
+import test.newsbulletin.file.FileIO;
 import test.newsbulletin.model.NewsList;
-import test.newsbulletin.model.SearchResults;
 
 import static java.security.AccessController.getContext;
 
-public class SearchResultsActivity extends AppCompatActivity {
+public class CollectionActivity extends AppCompatActivity {
 
 
-    //只有从主页跳转过来的时候set一次，然后将这个传入SearchResults，再次在搜索页面搜索时不用此变量。
-    public static final String QUERY_KEYWORD = "";
     static private int lastOffset = 0;
     static private int lastPosition = 0;
     View recyclerView;
-    Handler mHandler;
-    SearchResultsActivity.SimpleItemRecyclerViewAdapter mAdapter;
+    Handler mHandler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what){
+                case 1:
+                    mAdapter.notifyDataSetChanged();
+                    Log.d("func","handle"+mAdapter.getItemCount()+" "+recyclerView.toString());
+
+                    break;
+                default:;
+            }
+        }
+    };
+    CollectionActivity.SimpleItemRecyclerViewAdapter mAdapter;
+    FileIO io;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        String SearchContent = getIntent().getStringExtra(SearchResultsActivity.QUERY_KEYWORD);
-        setContentView(R.layout.activity_search_results);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.search_toolbar);
+        io = new FileIO();
+
+        setContentView(R.layout.activity_collection_list);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.collect_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         setupHandler();
 
-        mAdapter = new SearchResultsActivity.SimpleItemRecyclerViewAdapter(new SearchResults(SearchContent));
-        mAdapter.loadMore();
 
-        recyclerView = findViewById(R.id.search_item_list);
+        mAdapter = new CollectionActivity.SimpleItemRecyclerViewAdapter(new NewsList());
+        mAdapter.load();
+
+        recyclerView = findViewById(R.id.collect_item_list);
         assert recyclerView != null;
         setupRecyclerView((RecyclerView) recyclerView);
 
-
-        final SearchView mSearchView = (SearchView) findViewById(R.id.search_searchView);
-        setupSearchView(mSearchView);
-        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-
-                Log.d("func", "submit text" + query);
-
-                //mSearchView.setIconified(true);
-                mAdapter.set(query);
-                mAdapter.clear();
-                mAdapter.notifyDataSetChanged();
-                mAdapter.loadMore();
-
-                Log.d("func","text listener: "+((RecyclerView) recyclerView).getAdapter().toString());
-
-                return false;
-            }
-
-            // 当搜索内容改变时触发该方法
-            @Override
-            public boolean onQueryTextChange(String newText) {
-
-                return false;
-            }
-        });
     }
 
 
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        handleIntent(intent);
-        Log.d("func", "new intent");
-    }
-
-    private void handleIntent(Intent intent) {
-
-        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            String query = intent.getStringExtra(SearchManager.QUERY);
-            //use the query to search your data somehow
-        }
-    }
 
     private void setupHandler() {
-         mHandler = new Handler(){
+        mHandler = new Handler(){
             @Override
             public void handleMessage(Message msg) {
                 switch (msg.what){
@@ -121,17 +93,13 @@ public class SearchResultsActivity extends AppCompatActivity {
             }
         };
     }
-    private void setupSearchView(SearchView mSearchView) {
-
-        mSearchView.setSubmitButtonEnabled(true);
-        mSearchView.clearFocus();
-
-    }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
         recyclerView.setAdapter(mAdapter);
-
         recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext()));
+
+
+
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
 
             private int lastItem = 0;
@@ -189,55 +157,44 @@ public class SearchResultsActivity extends AppCompatActivity {
         }
     }
     public class SimpleItemRecyclerViewAdapter
-            extends RecyclerView.Adapter<SearchResultsActivity.SimpleItemRecyclerViewAdapter.ViewHolder> {
+            extends RecyclerView.Adapter<CollectionActivity.SimpleItemRecyclerViewAdapter.ViewHolder> {
 
-        private final SearchResults msearchResults;
+        private final NewsList mList;
 
-        public SimpleItemRecyclerViewAdapter(SearchResults results) {
-            //搜索跳转的时候搜索一次
-            msearchResults = results;
-            loadMore();
-        }
-        public void set(String key) { msearchResults.setKeyWord(key); }
-
-        public void clear() { msearchResults.clear(); }
-
-        public void loadMore() {
-            // This is the caller for the url connection. New thread:
-            Thread thread = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    if (msearchResults.search() == true)
-                    {
-                        Message msg = new Message();
-                        msg.what = 1;
-                        mHandler.sendMessage(msg);
-                    }
-
-                }
-            });
-            thread.start();
+        public SimpleItemRecyclerViewAdapter(NewsList results) {
+            //load more的连接请求由caller处理
+            mList = results;
         }
 
         @Override
-        public SearchResultsActivity.SimpleItemRecyclerViewAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public CollectionActivity.SimpleItemRecyclerViewAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.item_list_content, parent, false);
-            return new SearchResultsActivity.SimpleItemRecyclerViewAdapter.ViewHolder(view);
+            return new CollectionActivity.SimpleItemRecyclerViewAdapter.ViewHolder(view);
         }
 
         @Override
-        public void onBindViewHolder(final SearchResultsActivity.SimpleItemRecyclerViewAdapter.ViewHolder holder, int position) {
-            holder.mItem = msearchResults.get(position);
+        public void onBindViewHolder(final CollectionActivity.SimpleItemRecyclerViewAdapter.ViewHolder holder, int position) {
+            holder.mItem = mList.get(position);
 
             //holder.mIdView.setText(mnewsList.get(position).id);
+            holder.mView.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
+                @Override
+                public void onCreateContextMenu(ContextMenu menu, View view, ContextMenu.ContextMenuInfo contextMenuInfo) {
+                    menu.add(0, 0, 0, "删除").setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem menuItem) {
+                            return false;
+                        }
+                    });
+                }
+            });
             if(!holder.mItem.picture_id.isEmpty())
             {
                 Glide.with(getApplicationContext()).load(holder.mItem.picture_id.get(0)).placeholder(R.drawable.ic_launcher).into(holder.mImageView);
             }
             else holder.mImageView.setImageResource(R.drawable.ic_launcher);
-            holder.mContentView.setText(msearchResults.get(position).content);
-            Log.d("func", holder.toString()+"-"+position + "-" + holder.mContentView.getText());
+            holder.mContentView.setText(mList.get(position).content);
             holder.mView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -249,11 +206,12 @@ public class SearchResultsActivity extends AppCompatActivity {
                     context.startActivity(intent);
                 }
             });
+
         }
 
         @Override
         public int getItemCount() {
-            return msearchResults.size();
+            return mList.size();
         }
 
         public class ViewHolder extends RecyclerView.ViewHolder {
@@ -261,7 +219,7 @@ public class SearchResultsActivity extends AppCompatActivity {
             //public final TextView mIdView;
             public final TextView mContentView;
             public final ImageView mImageView;
-            public SearchResults.SearchResultItem mItem;
+            public NewsList.NewsListItem mItem;
 
             public ViewHolder(View view) {
                 super(view);
@@ -276,6 +234,23 @@ public class SearchResultsActivity extends AppCompatActivity {
             public String toString() {
                 return super.toString() + " '" + mContentView.getText() + "'";
             }
+        }
+        public void load() {
+            //todo：是否合法的file
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    if (true)
+                    {
+                        io.getSavedNewsList(mList);
+                        Message msg = new Message();
+                        msg.what = 1;
+                        mHandler.sendMessage(msg);
+                    }
+
+                }
+            });
+            thread.start();
         }
     }
 

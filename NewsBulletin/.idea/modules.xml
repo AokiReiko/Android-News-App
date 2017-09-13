@@ -5,6 +5,8 @@
       <module fileurl="file://$PROJECT_DIR$/NewsBulletin.iml" filepath="$PROJECT_DIR$/NewsBulletin.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/draglibrary/draglibrary.iml" filepath="$PROJECT_DIR$/draglibrary/draglibrary.iml" />
+      <module fileurl="file://$PROJECT_DIR$/libammsdk/libammsdk.iml" filepath="$PROJECT_DIR$/libammsdk/libammsdk.iml" />
+      <module fileurl="file://$PROJECT_DIR$/libammsdk/libammsdk.iml" filepath="$PROJECT_DIR$/libammsdk/libammsdk.iml" />
     </modules>
   </component>
 </project>

@@ -1,10 +1,12 @@
 package test.newsbulletin;
 
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
@@ -13,6 +15,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
 import android.view.Menu;
+import android.support.v7.widget.ShareActionProvider;
 import android.widget.Toast;
 
 import test.newsbulletin.model.DetailContent;
@@ -28,6 +31,7 @@ public class ItemDetailActivity extends AppCompatActivity {
     boolean isSpeechActive = false, isSpeechStart = false;
     SpeechGenerator generator = null;
     ItemDetailFragment fragment = null;
+    private ShareActionProvider mShareUtil;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,6 +69,7 @@ public class ItemDetailActivity extends AppCompatActivity {
         }
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        Log.d("speech","fab");
         final Activity this_activity = this;
 
 
@@ -77,17 +82,23 @@ public class ItemDetailActivity extends AppCompatActivity {
 
                     DetailContent.NewsDetailItem item = fragment.mDetail.detailItem;
                     String str_read = item.Title + "。作者：" + item.Author + "。" + item.Content;
+                    Log.d("speech","speak 1:" + str_read);
+
                     generator = new SpeechGenerator(str_read, this_activity);
+                    Log.d("speech","speak 1.25:" + generator);
                     generator.start();
+                    Log.d("speech","speak 1.5:" + str_read + this_activity);
                 }
                 else if(!isSpeechStart)
                 {
                     isSpeechStart = true;
+                    Log.d("speech","speak 2");
                     generator.resume();
                 }
                 else
                 {
                     isSpeechStart = false;
+                    Log.d("speech","speak 3");
                     generator.pause();
                 }
             }
@@ -99,8 +110,18 @@ public class ItemDetailActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
     {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.share_menu, menu);
+        MenuItem item = menu.findItem(R.id.share);
+        mShareUtil = (ShareActionProvider) MenuItemCompat.getActionProvider((MenuItem) item);
 
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("image/*");intent.getComponent();
+        //intent.setComponent(new ComponentName("com.tencent.mm","com.tencent.mm.ui.tools.ShareToTimeLineUI"));
+        intent.putExtra(Intent.EXTRA_SUBJECT, "Share");
+        intent.putExtra(Intent.EXTRA_TITLE,"Title");
+        intent.putExtra(Intent.EXTRA_TEXT, "I have successfully share my message through my app");
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        setShareIntent(intent);
         return true;
     }
 
@@ -117,7 +138,7 @@ public class ItemDetailActivity extends AppCompatActivity {
     String msg = "";
     switch (menuItem.getItemId()) {
 
-      case R.id.action_share:
+      case R.id.share:
         msg += "Click share";
         break;
 
@@ -140,5 +161,10 @@ public class ItemDetailActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+    private void setShareIntent(Intent shareIntent) {
+        if (mShareUtil != null) {
+            mShareUtil.setShareIntent(shareIntent);
+        }
     }
 }

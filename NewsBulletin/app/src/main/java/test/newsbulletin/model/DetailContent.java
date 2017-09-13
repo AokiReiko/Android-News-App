@@ -32,7 +32,6 @@ import test.newsbulletin.model.NewsList;
 public class DetailContent {
 
     public NewsDetailItem detailItem;
-    public Map<String, NewsDetailItem> newsMap = new HashMap<String, NewsDetailItem>();
 
     private static final String detail_base_url = "http://166.111.68.66:2042/news/action/query/detail";
     public String detailID;

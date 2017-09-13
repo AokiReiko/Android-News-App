@@ -12,7 +12,9 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Adapter;
@@ -205,6 +207,24 @@ public class ItemListFragment extends Fragment {
             holder.mItem = mnewsList.get(position);
             //holder.mIdView.setText(mnewsList.get(position).id);
 
+            holder.mView.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
+                @Override
+                public void onCreateContextMenu(ContextMenu menu, View view, ContextMenu.ContextMenuInfo contextMenuInfo) {
+                    menu.add(0, 0, 0, "不感兴趣").setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem menuItem) {
+                            return false;
+                        }
+                    });
+                    menu.add(0, 1, 0, "删除").setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem menuItem) {
+                            return false;
+                        }
+                    });
+
+                }
+            });
             //看过的页面灰色
             if (holder.mItem.isRead) {
                 holder.mContentView.setTextColor(Color.GRAY);

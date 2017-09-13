@@ -8,6 +8,7 @@
     <string name="drag_title">编辑分类</string>
     <string name="drag_list">已有</string>
     <string name="unasigned_list">待选</string>
+    <string name="collection">收藏</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
@@ -92,7 +93,7 @@
         <item>4</item>
         <item>5</item>
     </string-array>
-    <string formatted="false" name="tts_toast_format">缓冲进度为%d%%，播放进度为%d%%</string>
+    <string name="tts_toast_format" formatted="false">缓冲进度为%d%%，播放进度为%d%%</string>
     <!-- 语言 -->
     <string-array name="language_entries">
         <item>普通话</item>

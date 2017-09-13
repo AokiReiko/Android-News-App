@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
@@ -30,6 +31,8 @@ public class SpeechGenerator {
         activity = _activity;
         str = _str;
         mTts = SpeechSynthesizer.createSynthesizer(activity, mTtsInitListener);
+
+        Log.d("speech 1.45","mtts create" + mTtsInitListener+SpeechSynthesizer.createSynthesizer(activity, mTtsInitListener));
         // 云端发音人名称列表
 
         Resources res = activity.getResources();
@@ -88,8 +91,11 @@ public class SpeechGenerator {
 
     private void setParam(){
         // 清空参数
+
+        Log.d("speech 1.35","null mtts?"+mTts);
         mTts.setParameter(SpeechConstant.PARAMS, null);
 
+        Log.d("speech",mTts.toString());
 
         // 根据合成引擎设置相应参数
         if(mEngineType.equals(SpeechConstant.TYPE_CLOUD)) {

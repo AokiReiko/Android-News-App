@@ -37,7 +37,7 @@ import android.util.Log;
 public class ItemDetailFragment extends Fragment {
     /**
      * The fragment argument representing the item ID that this fragment
-     * represents.
+     * represents.g
      */
     public static final String ARG_ITEM_ID = "item_id";
 
@@ -106,7 +106,10 @@ public class ItemDetailFragment extends Fragment {
                             mDetail.bitmap = BitmapFactory.decodeStream(is);
                             is.close();
                         }
-                        io = new FileIO();
+                        Message msg = new Message();
+                        msg.what = 1;
+
+                        mHandler.sendMessage(msg);
 
                     } catch (Exception e) {e.printStackTrace();}
                 }

@@ -49,6 +49,7 @@ dependencies {
     compile 'com.android.support:support-v4:22.0.0'
     compile project(':draglibrary')
     compile files('libs/Msc.jar')
+    compile project(':libammsdk')
 }
 repositories {
     maven {
