@@ -232,14 +232,17 @@ public class ItemListActivity extends AppCompatActivity
 
                         switch (menuItem.getItemId()) {
                             case R.id.nav_tag:
-                                Intent intent = new Intent(mDrawerLayout.getContext(), DragTabActivity.class);
-                                startActivity(intent);
+                                Intent intent_tag = new Intent(mDrawerLayout.getContext(), DragTabActivity.class);
+                                startActivity(intent_tag);
                                 Log.d("func", "nav_tag" +
                                         "");
-                            case R.id.nav_friends:
-                                Log.d("func", "discuss_nav");
-                            case R.id.nav_messages:
-                                Log.d("func", "message_nav");
+                                break;
+                            case R.id.nav_collect:
+                                Intent intent_collec = new Intent(mDrawerLayout.getContext(), CollectionActivity.class);
+                                startActivity(intent_collec);
+                                break;
+                            default:
+                                break;
                         }
                         menuItem.setChecked(true);
                         mDrawerLayout.closeDrawers();
@@ -292,10 +295,6 @@ public class ItemListActivity extends AppCompatActivity
             case R.id.nav_friends:
                 Log.d("func", "friends");
                 break;
-            case R.id.nav_messages:
-                Log.d("func","messages");
-                break;
-
         }
         return super.onOptionsItemSelected(item);
     }

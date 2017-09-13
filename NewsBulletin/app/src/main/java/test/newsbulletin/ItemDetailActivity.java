@@ -83,8 +83,11 @@ public class ItemDetailActivity extends AppCompatActivity {
                     DetailContent.NewsDetailItem item = fragment.mDetail.detailItem;
                     String str_read = item.Title + "。作者：" + item.Author + "。" + item.Content;
                     Log.d("speech","speak 1:" + str_read);
+
                     generator = new SpeechGenerator(str_read, this_activity);
+                    Log.d("speech","speak 1.25:" + generator);
                     generator.start();
+                    Log.d("speech","speak 1.5:" + str_read + this_activity);
                 }
                 else if(!isSpeechStart)
                 {

@@ -6,7 +6,7 @@
             android:id="@+id/nav_tag"
             android:title="编辑分类" />
         <item
-            android:id="@+id/nav_messages"
+            android:id="@+id/nav_collect"
             android:title="收藏列表" />
         <item
             android:id="@+id/nav_friends"
