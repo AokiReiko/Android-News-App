@@ -28,7 +28,17 @@
         </android.support.v7.widget.Toolbar>
 
     </android.support.design.widget.AppBarLayout>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/search_item_list"
+        android:name="test.newsbulletin.ItemListFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="60dp"
+        app:layoutManager="LinearLayoutManager"
+        tools:context="test.newsbulletin.ItemListActivity"
+        tools:listitem="@layout/item_list_content"/>
 
-    <include layout="@layout/item_list"/>
 
 </android.support.design.widget.CoordinatorLayout>

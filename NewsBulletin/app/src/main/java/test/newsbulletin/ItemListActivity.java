@@ -130,6 +130,7 @@ public class ItemListActivity extends AppCompatActivity
                 getDelegate().setLocalNightMode(currentNightMode == Configuration.UI_MODE_NIGHT_NO ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO);
 
                 recreate();
+
             }
         });
 

@@ -59,7 +59,7 @@ public class SearchResultsActivity extends AppCompatActivity {
         mAdapter = new SearchResultsActivity.SimpleItemRecyclerViewAdapter(new SearchResults(SearchContent));
         mAdapter.loadMore();
 
-        recyclerView = findViewById(R.id.item_list);
+        recyclerView = findViewById(R.id.search_item_list);
         assert recyclerView != null;
         setupRecyclerView((RecyclerView) recyclerView);
 
@@ -72,8 +72,7 @@ public class SearchResultsActivity extends AppCompatActivity {
 
                 Log.d("func", "submit text" + query);
 
-                mSearchView.setIconified(true);
-
+                //mSearchView.setIconified(true);
                 mAdapter.set(query);
                 mAdapter.clear();
                 mAdapter.notifyDataSetChanged();
