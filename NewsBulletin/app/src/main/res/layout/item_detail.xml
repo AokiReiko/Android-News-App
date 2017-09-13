@@ -22,8 +22,9 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
+            android:padding="30dp"
             android:gravity="center"
-            android:textColor="@color/Title_color"
+            android:textColor="@color/Text_Color"
             android:textStyle="bold"
             android:textSize="25dp"
             android:textAppearance="?attr/textAppearanceListItem" />

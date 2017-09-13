@@ -31,7 +31,6 @@ import test.newsbulletin.model.NewsList;
 public class DetailContent {
 
     public NewsDetailItem detailItem;
-
     private static final String detail_base_url = "http://166.111.68.66:2042/news/action/query/detail";
     public String detailID;
     static String getSpecificPageUrl(String detailID) {return detail_base_url + "?newsId=" + detailID;}
@@ -78,7 +77,17 @@ public class DetailContent {
                 Log.d("check",pics[i] );
                 picture_url.add(pics[i]);
             }
-            detailItem = (new NewsDetailItem(detailID, js_obj.getString("news_Title"), js_obj.getString("news_Author"), js_obj.getString("news_Content"), picture_url));
+            if(pics.length!=0)
+            {
+                detailItem = (new NewsDetailItem(detailID, js_obj.getString("news_Title"), js_obj.getString("news_Author"), js_obj.getString("news_Content"), picture_url));
+            }
+            else
+            {
+                List<String> list = new ArrayList<>();
+                list.add("NOURL");
+                detailItem = new NewsDetailItem("0", "无图", "", "没有URL", list);
+                return true;
+            }
             return true;
 
         } catch (Exception eso) {

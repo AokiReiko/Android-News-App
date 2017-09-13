@@ -46,7 +46,9 @@ public class ItemDetailFragment extends Fragment {
      * represents.g
      */
     private List<ImageView>  imageList = new ArrayList<ImageView>();
-
+    private boolean check_out = true;
+    private  boolean tmp_if = true;
+    Data data;
     public static final String ARG_ITEM_ID = "item_id";
     List<Bitmap> bitmap = new ArrayList<Bitmap>();
     /**
@@ -99,25 +101,45 @@ public class ItemDetailFragment extends Fragment {
                 public void run() {
                     try {
                         loadDetailThread.join();
+                        tmp_if = false;
                         Log.d("func", "disconnect load: " + mDetail.detailItem.Picture);
-                        String str = mDetail.detailItem.Picture.get(0);
-                        if(str == "disconnect")
+                        if(mDetail.detailItem.Picture.size()!=0)
                         {
-
-                            Resources res = getResources();
-                            bitmap.add(BitmapFactory.decodeResource(res, R.drawable.disconnect)) ;
-                        }
-                        else {
-
-                            for(int i=1; i<=mDetail.detailItem.Picture.size(); i++)
+                            String str = mDetail.detailItem.Picture.get(0);
+                            Log.v("layout",str+" 77");
+                            if(str != "disconnect"&&str.indexOf("http")==-1)
                             {
-                                URL url = new URL(mDetail.detailItem.Picture.get(i-1));
-                                InputStream is = url.openStream();
-                                bitmap.add(BitmapFactory.decodeStream(is));
-                                is.close();
+                                check_out = false;
+                                Resources res = getResources();
+                                bitmap.add(BitmapFactory.decodeResource(res, R.drawable.ic_launcher));
+                                Log.v("layout",bitmap.get(0)+" 98");
+                            }
+                            else if(str == "disconnect")
+                            {
+
+                                Resources res = getResources();
+
+                                bitmap.add(BitmapFactory.decodeResource(res, R.drawable.disconnect)) ;
+                                Log.v("layout",bitmap.get(0)+" 99");
+                            }
+                            else {
+
+                                for(int i=1; i<=mDetail.detailItem.Picture.size(); i++)
+                                {
+                                    URL url = new URL(mDetail.detailItem.Picture.get(i-1));
+                                    InputStream is = url.openStream();
+                                    bitmap.add(BitmapFactory.decodeStream(is));
+                                    Log.v("layout",bitmap.get(0)+" 88");
+                                    is.close();
+                                }
                             }
                         }
+                        else
+                        {
+                            check_out = false;
+                        }
                         Message msg = new Message();
+
                         msg.what = 1;
 
                         mHandler.sendMessage(msg);
@@ -129,7 +151,7 @@ public class ItemDetailFragment extends Fragment {
 
             CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
             if (appBarLayout != null) {
-                appBarLayout.setTitle("分类");
+                appBarLayout.setTitle(" ");
             }
         }
 
@@ -142,12 +164,7 @@ public class ItemDetailFragment extends Fragment {
 
 
         // Show the dummy content as text in a TextView.
-        try {
-            loadImageThread.join();
-        }
-        catch(Exception e){}
-        setUI();
-        Log.v("layout","!!!");
+
         return rootView;
     }
 
@@ -165,7 +182,6 @@ public class ItemDetailFragment extends Fragment {
                 {
                     Message msg = new Message();
                     msg.what = 1;
-
                     mHandler.sendMessage(msg);
                 }
 
@@ -184,58 +200,59 @@ public class ItemDetailFragment extends Fragment {
                 Log.v("bitmap_in","bitmap_in");
           //      ((ImageView) rootView.findViewById(R.id.imageview_bg)).setImageBitmap(bitmap);
           //  }
-
-            if (bitmap != null && !bitmap.get(0).isRecycled() && Data.if_pic) {
+            boolean if_pic = true;
+            if(getActivity() != null)
+            {
+                data = (Data) getActivity().getApplication();
+                if_pic = data.if_pic;
+            }
+            if (!bitmap.isEmpty()&&bitmap.size()!=0&&if_pic) {
                 imageview = (ImageView)getActivity().findViewById(R.id.imageview_bg);
-                imageview.setImageBitmap(bitmap.get(0));
+                Log.v("layout","bitmap_in"+bitmap.size());
+                imageview.setImageResource(R.drawable.timg);
                 for (int i = 1; i <= bitmap.size(); i++) {
-                    ImageView imageView = new ImageView(getContext());
-                    imageView.setImageBitmap(bitmap.get(i - 1));
-                    imageList.add(imageView);
+                    ImageView imageView2 = new ImageView(getContext());
+                    imageView2.setImageBitmap(bitmap.get(i - 1));
+                    imageList.add(imageView2);
+
                 }
             }
-            else
-            {
-                ImageView imageView = new ImageView(getContext());
-                imageView.setImageResource(R.drawable.ic_launcher);
-                imageList.add(imageView);
+            PagerAdapter pagerAdapter = new PagerAdapter() {
 
-            }
-                PagerAdapter pagerAdapter = new PagerAdapter() {  
-              
-            @Override  
-            public boolean isViewFromObject(View arg0, Object arg1) {  
-                // TODO Auto-generated method stub  
-                return arg0 == arg1;  
-            }  
-              
-            @Override  
-            public int getCount() {  
-                // TODO Auto-generated method stub  
-                return imageList.size();
-            }  
-              
-            @Override  
-            public void destroyItem(ViewGroup container, int position,  
-                    Object object) {  
-                // TODO Auto-generated method stub  
-                container.removeView(imageList.get(position));
-            }  
-              
-            @Override  
-            public Object instantiateItem(ViewGroup container, int position) {  
-                // TODO Auto-generated method stub  
-                container.addView(imageList.get(position));
-                  
-                  
-                return imageList.get(position);
-            }  
-        };
+                @Override
+                public boolean isViewFromObject(View arg0, Object arg1) {
+                    // TODO Auto-generated method stub
+                    return arg0 == arg1;
+                }
 
-                ((ViewPager) rootView.findViewById(R.id.viewPager)).setAdapter(pagerAdapter);
+                @Override
+                public int getCount() {
+                    // TODO Auto-generated method stub
+                    return imageList.size();
+                }
+
+                @Override
+                public void destroyItem(ViewGroup container, int position,
+                                        Object object) {
+                    // TODO Auto-generated method stub
+                    container.removeView(imageList.get(position));
+                }
+
+                @Override
+                public Object instantiateItem(ViewGroup container, int position) {
+                    // TODO Auto-generated method stub
+                    container.addView(imageList.get(position));
+
+
+                    return imageList.get(position);
+                }
+            };
+
+            ((ViewPager) rootView.findViewById(R.id.viewPager)).setAdapter(pagerAdapter);
 
 
 
         }
+
     }
 }

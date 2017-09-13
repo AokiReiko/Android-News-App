@@ -31,7 +31,7 @@ public class Data extends Application {
     public IWXAPI api;//这个对象是专门用来向微信发送数据的一个重要接口,使用强引用持有,所有的信息发送都是基于这个对象的
 
 
-    public static boolean if_pic = true;
+    public  boolean if_pic = true;
     public static boolean which_inter = true;
     public boolean if_day = true;
     // zps: 文件读写操作必须要在activity环境已知的时候才能进行，所以这里只能改成public了

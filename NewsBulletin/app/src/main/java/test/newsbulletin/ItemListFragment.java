@@ -230,7 +230,7 @@ public class ItemListFragment extends Fragment {
                 holder.mContentView.setTextColor(Color.GRAY);
                 Log.d("debug","isread");
             } else {
-                holder.mContentView.setTextColor(Color.BLACK);
+                holder.mContentView.setTextColor(getActivity().getResources().getColor(R.color.Text_Color));
                 Log.d("debug","not " + holder.mItem.content);
             }
 
