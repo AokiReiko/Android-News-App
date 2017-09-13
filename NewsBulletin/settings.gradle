@@ -1,1 +1,1 @@
-include ':app', ':draglibrary', ':libammsdk'
+include ':app', ':draglibrary', ':libammsdk', ':weibosdkcore'

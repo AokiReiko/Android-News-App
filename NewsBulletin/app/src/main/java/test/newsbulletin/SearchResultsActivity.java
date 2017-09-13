@@ -92,6 +92,11 @@ public class SearchResultsActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        scrollToPosition();
+    }
 
     @Override
     protected void onNewIntent(Intent intent) {
@@ -130,8 +135,8 @@ public class SearchResultsActivity extends AppCompatActivity {
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
         recyclerView.setAdapter(mAdapter);
-
         recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext()));
+
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
 
             private int lastItem = 0;

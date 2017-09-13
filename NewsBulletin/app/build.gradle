@@ -50,6 +50,7 @@ dependencies {
     compile project(':draglibrary')
     compile files('libs/Msc.jar')
     compile project(':libammsdk')
+    compile project(':weibosdkcore')
 }
 repositories {
     maven {

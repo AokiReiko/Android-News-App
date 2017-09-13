@@ -50,7 +50,9 @@ public class ItemDetailFragment extends Fragment {
     private  boolean tmp_if = true;
     Data data;
     public static final String ARG_ITEM_ID = "item_id";
+
     List<Bitmap> bitmap = new ArrayList<Bitmap>();
+
     /**
      * The dummy content this fragment is presenting. */
     View rootView;
@@ -95,13 +97,17 @@ public class ItemDetailFragment extends Fragment {
 
             loadDetail();
 
-            // zps: 这里的多线程是否有问题？
+
             loadImageThread=new Thread(new Runnable(){
                 @Override
                 public void run() {
                     try {
                         loadDetailThread.join();
                         tmp_if = false;
+
+                        if(mDetail.bitmap != null)
+                            return;
+
                         Log.d("func", "disconnect load: " + mDetail.detailItem.Picture);
                         if(mDetail.detailItem.Picture.size()!=0)
                         {
@@ -216,6 +222,7 @@ public class ItemDetailFragment extends Fragment {
                     imageList.add(imageView2);
 
                 }
+
             }
             PagerAdapter pagerAdapter = new PagerAdapter() {
 

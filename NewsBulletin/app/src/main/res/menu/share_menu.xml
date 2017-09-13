@@ -1,13 +1,25 @@
-<?xml version="1.0" encoding="utf-8"?>
-
-
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:support="http://schemas.android.com/apk/res-auto">
-
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ItemDetailActivity">
         <item
-            android:id="@+id/share"
-            android:title="分享此页面"
-            support:actionProviderClass="android.support.v7.widget.ShareActionProvider"
-            support:showAsAction="always" />
+            android:id="@+id/collect"
+            android:orderInCategory="100"
+            android:title="收藏到本地"
+            app:showAsAction="never" />
+        <item
+            android:id="@+id/share_wx_friend"
+            android:title="分享到微信"
+            app:showAsAction="never" />
+        <item
+            android:id="@+id/share_wx_line"
+            android:title="分享到朋友圈"
+            app:showAsAction="never" />
+        <item
+            android:id="@+id/share_other"
+            android:orderInCategory="90"
+            android:title="分享到其他"
+            app:showAsAction="never" />
+
 
 </menu>

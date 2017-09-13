@@ -1,4 +1,5 @@
 package test.newsbulletin.model;
+import android.graphics.Bitmap;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -79,13 +80,13 @@ public class DetailContent {
             }
             if(pics.length!=0)
             {
-                detailItem = (new NewsDetailItem(detailID, js_obj.getString("news_Title"), js_obj.getString("news_Author"), js_obj.getString("news_Content"), picture_url));
+                detailItem = (new NewsDetailItem(detailID, js_obj.getString("news_Title"), js_obj.getString("news_Author"), js_obj.getString("news_Content"), picture_url,js_obj.getString("news_URL")));
             }
             else
             {
                 List<String> list = new ArrayList<>();
                 list.add("NOURL");
-                detailItem = new NewsDetailItem("0", "无图", "", "没有URL", list);
+                detailItem = new NewsDetailItem("0", "无图", "", "没有URL", list,"");
                 return true;
             }
             return true;
@@ -97,7 +98,7 @@ public class DetailContent {
             {
                 List<String> list = new ArrayList<>();
                 list.add("disconnect");
-                detailItem = new NewsDetailItem("-1", "连接错误", "", "网络未连接，且文件未缓存", list);
+                detailItem = new NewsDetailItem("-1", "连接错误", "", "网络未连接，且文件未缓存", list, "");
                 return true;
             }
         }
@@ -106,7 +107,7 @@ public class DetailContent {
 
 
     }
-
+    public Bitmap bitmap = null;
 
     public static class NewsDetailItem implements Serializable{
         public final String id;
@@ -114,14 +115,15 @@ public class DetailContent {
         public final String Author;
         public final String Content;
         public final List<String> Picture;
+        public final String news_url;
 
-        public NewsDetailItem(String id, String title, String author, String content, List<String> picture) {
+        public NewsDetailItem(String id, String title, String author, String content, List<String> picture, String url) {
             this.id = id;
             this.Title = title;
             this.Author = author;
             this.Content = content;
             this.Picture = picture;
-
+            this.news_url = url;
         }
 
         @Override

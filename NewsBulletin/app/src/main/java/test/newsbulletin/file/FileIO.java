@@ -2,6 +2,8 @@ package test.newsbulletin.file;
 
 import android.app.Activity;
 import android.app.Application;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.provider.ContactsContract;
 import android.util.Log;
@@ -97,7 +99,8 @@ public class FileIO
 
             ByteArrayOutputStream byte_out = new ByteArrayOutputStream();
             ObjectOutputStream object_out = new ObjectOutputStream(byte_out);
-            object_out.writeObject(list.detailID);
+            object_out.writeObject(list.detailItem);
+            list.bitmap.compress(Bitmap.CompressFormat.PNG, 100, byte_out);
             bytes = byte_out.toByteArray();
             byte_out.close();
             object_out.close();
@@ -111,14 +114,18 @@ public class FileIO
         Log.d("func", "detail save finished");
     }
 
-    public void eraseDetail(DetailContent list) // 取消收藏时调用
+    public void eraseDetail(String newsId) // 取消收藏时调用
     {
-        String id = list.detailID;
         File path = application.getFilesDir();
 
-        File dir = new File(path, "Detail/" + id + ".detail");
+        File dir = new File(path, "Detail/" + newsId + ".detail");
         if(dir.isFile())
             dir.delete();
+    }
+
+    public void eraseDetail(DetailContent list) // 取消收藏时调用
+    {
+        eraseDetail(list.detailID);
     }
 
     public boolean isDetailSaved(DetailContent list) // 是否收藏了某条新闻
@@ -138,12 +145,14 @@ public class FileIO
             ByteArrayInputStream byte_in = new ByteArrayInputStream(bytes);
             ObjectInputStream object_in = new ObjectInputStream(byte_in);
             list.detailItem = (DetailContent.NewsDetailItem) object_in.readObject();
+            list.bitmap = BitmapFactory.decodeStream(byte_in);
         }
         catch(Exception e)
         {
             Log.d("func", "detail load failed");
             return false;
         }
+        Log.d("func", "detail load finished");
         return true;
     }
     public void saveNewsList(NewsList list) // 存储新闻列表
@@ -194,13 +203,17 @@ public class FileIO
     public void getSavedNewsList(NewsList list) // 获得已收藏新闻列表
     {
         File path = application.getFilesDir();
-        File dir = new File(path, "Details");
+        File dir = new File(path, "Detail");
         int num = 0;
+        if (!dir.isDirectory()) {
+            dir.mkdir();
+        }
         list.newsList.clear();
         list.newsMap.clear();
         for(File file : dir.listFiles())
         {
             String id = file.getName();
+            id = id.substring(0, id.length() - 7);
             Log.d("func", "saved detail: " + id);
             DetailContent detail = new DetailContent(id);
             loadDetail(detail);

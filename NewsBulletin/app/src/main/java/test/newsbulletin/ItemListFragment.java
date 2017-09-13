@@ -203,16 +203,18 @@ public class ItemListFragment extends Fragment {
         }
 
         @Override
-        public void onBindViewHolder(final ViewHolder holder, int position) {
+        public void onBindViewHolder(final ViewHolder holder, final int position) {
             holder.mItem = mnewsList.get(position);
             //holder.mIdView.setText(mnewsList.get(position).id);
 
             holder.mView.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
                 @Override
                 public void onCreateContextMenu(ContextMenu menu, View view, ContextMenu.ContextMenuInfo contextMenuInfo) {
-                    menu.add(0, 0, 0, "不感兴趣").setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                    menu.add(0, 0, 0, "删除并标记无趣").setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                         @Override
                         public boolean onMenuItemClick(MenuItem menuItem) {
+                            NewsList.NewsListItem removed_item = mnewsList.remove(position);
+                            mAdapter.notifyDataSetChanged();
                             return false;
                         }
                     });
