@@ -113,7 +113,6 @@ public class CollectionActivity extends AppCompatActivity {
                 Log.d("func","scroll state changed");
                 if (lastItem == recyclerView.getAdapter().getItemCount() - 1 && newState == RecyclerView.SCROLL_STATE_IDLE ) {
                     isLoad = true;
-                    ((SearchResultsActivity.SimpleItemRecyclerViewAdapter)recyclerView.getAdapter()).loadMore();
                 }
                 // To update the pre-layout list.
                 Log.d("search", "1:"+recyclerView);
