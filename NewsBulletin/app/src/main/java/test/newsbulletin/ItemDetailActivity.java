@@ -24,9 +24,12 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.sina.weibo.sdk.api.ImageObject;
+import com.sina.weibo.sdk.api.WebpageObject;
 import com.sina.weibo.sdk.api.WeiboMessage;
+import com.sina.weibo.sdk.api.WeiboMultiMessage;
 import com.sina.weibo.sdk.api.share.SendMessageToWeiboRequest;
 import com.sina.weibo.sdk.api.share.WeiboShareAPIImpl;
+import com.sina.weibo.sdk.utils.Utility;
 import com.tencent.mm.sdk.openapi.SendMessageToWX;
 import com.tencent.mm.sdk.openapi.WXMediaMessage;
 import com.tencent.mm.sdk.openapi.WXWebpageObject;
@@ -151,12 +154,26 @@ public class ItemDetailActivity extends AppCompatActivity {
                 finish();
                 return true;
             } else if (id == R.id.share_other){
+                DetailContent.NewsDetailItem item;
+                if (fragment != null && fragment.mDetail != null){
+                    item = fragment.mDetail.detailItem;
+                } else return true;
 
                 WeiboMessage weiboMessage = new WeiboMessage();
-                ImageObject imageObject = new ImageObject();
-                Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
-                imageObject.setImageObject(bitmap);
-                weiboMessage.mediaObject = imageObject;
+
+                WebpageObject mediaObject = new WebpageObject();
+                mediaObject.identify = Utility.generateGUID();
+                mediaObject.title = item.Title;
+                mediaObject.description = item.Content.substring(0,40);
+                if (fragment.mDetail.bitmap != null) {
+                    Bitmap bmp = PictureParser.imageZoom(fragment.mDetail.bitmap.get(0));
+                    mediaObject.setThumbImage(bmp);
+
+                }
+                mediaObject.actionUrl = item.news_url;
+
+
+                weiboMessage.mediaObject = mediaObject;
                 SendMessageToWeiboRequest request = new SendMessageToWeiboRequest();
                 request.transaction = String.valueOf(System.currentTimeMillis());
                 request.message = weiboMessage;
@@ -187,7 +204,7 @@ public class ItemDetailActivity extends AppCompatActivity {
 
                 }
                 SendMessageToWX.Req req = new SendMessageToWX.Req();
-                req.transaction = "newsBulletin";
+                req.transaction = String.valueOf(System.currentTimeMillis());
                 req.message = msg;
                 switch (id) {
                     case R.id.share_wx_friend:
