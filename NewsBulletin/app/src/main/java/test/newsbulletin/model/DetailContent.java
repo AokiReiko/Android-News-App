@@ -107,7 +107,7 @@ public class DetailContent {
 
 
     }
-    public Bitmap bitmap = null;
+    public List<Bitmap> bitmap = new ArrayList<Bitmap>();
 
     public static class NewsDetailItem implements Serializable{
         public final String id;

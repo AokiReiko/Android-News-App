@@ -93,6 +93,7 @@ public class FileIO
             dir.mkdir();
 
         String id = list.detailID;
+        Log.d("func", id);
         String filename = "Detail/" + id + ".detail";
         byte[] bytes = null;
         try {
@@ -100,7 +101,11 @@ public class FileIO
             ByteArrayOutputStream byte_out = new ByteArrayOutputStream();
             ObjectOutputStream object_out = new ObjectOutputStream(byte_out);
             object_out.writeObject(list.detailItem);
-            list.bitmap.compress(Bitmap.CompressFormat.PNG, 100, byte_out);
+            Log.d("func", "before compress");
+            Log.d("func", "" + list.bitmap);
+            for(Bitmap bit : list.bitmap)
+                bit.compress(Bitmap.CompressFormat.PNG, 100, byte_out);
+            Log.d("func", "after compress");
             bytes = byte_out.toByteArray();
             byte_out.close();
             object_out.close();
@@ -147,7 +152,8 @@ public class FileIO
             ByteArrayInputStream byte_in = new ByteArrayInputStream(bytes);
             ObjectInputStream object_in = new ObjectInputStream(byte_in);
             list.detailItem = (DetailContent.NewsDetailItem) object_in.readObject();
-            list.bitmap = BitmapFactory.decodeStream(byte_in);
+            for(int i = 0; i < list.detailItem.Picture.size(); i++)
+                list.bitmap.add(BitmapFactory.decodeStream(byte_in));
         }
         catch(Exception e)
         {
