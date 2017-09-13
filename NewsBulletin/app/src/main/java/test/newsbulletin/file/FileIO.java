@@ -205,6 +205,9 @@ public class FileIO
         File path = application.getFilesDir();
         File dir = new File(path, "Detail");
         int num = 0;
+        if (!dir.isDirectory()) {
+            dir.mkdir();
+        }
         list.newsList.clear();
         list.newsMap.clear();
         for(File file : dir.listFiles())

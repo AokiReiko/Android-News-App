@@ -80,6 +80,12 @@ public class NewsList {
         if (i < newsList.size()) return newsList.get(i);
         return null;
     }
+    public NewsListItem remove(int i) {
+        if (i >= newsList.size()) return null;
+        NewsListItem res = newsList.get(i);
+        newsList.remove(i);
+        return res;
+    }
     FileIO io = new FileIO();
     public int size() {
         return newsList.size();

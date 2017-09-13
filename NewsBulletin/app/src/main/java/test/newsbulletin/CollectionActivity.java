@@ -37,19 +37,7 @@ public class CollectionActivity extends AppCompatActivity {
     static private int lastOffset = 0;
     static private int lastPosition = 0;
     View recyclerView;
-    Handler mHandler = new Handler(){
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what){
-                case 1:
-                    mAdapter.notifyDataSetChanged();
-                    Log.d("func","handle"+mAdapter.getItemCount()+" "+recyclerView.toString());
-
-                    break;
-                default:;
-            }
-        }
-    };
+    Handler mHandler;
     CollectionActivity.SimpleItemRecyclerViewAdapter mAdapter;
     FileIO io;
 
@@ -78,7 +66,11 @@ public class CollectionActivity extends AppCompatActivity {
 
     }
 
-
+    @Override
+    public void onResume() {
+        super.onResume();
+        scrollToPosition();
+    }
 
     private void setupHandler() {
         mHandler = new Handler(){
@@ -184,6 +176,8 @@ public class CollectionActivity extends AppCompatActivity {
                     menu.add(0, 0, 0, "删除").setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                         @Override
                         public boolean onMenuItemClick(MenuItem menuItem) {
+                            io.eraseDetail(holder.mItem.news_id);
+                            mAdapter.notifyDataSetChanged();
                             return false;
                         }
                     });
