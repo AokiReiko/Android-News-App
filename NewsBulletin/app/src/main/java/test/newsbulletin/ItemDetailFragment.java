@@ -17,9 +17,15 @@ import android.graphics.BitmapFactory;
 import android.widget.ImageView;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.app.Application;
 
 import test.newsbulletin.file.FileIO;
@@ -39,8 +45,10 @@ public class ItemDetailFragment extends Fragment {
      * The fragment argument representing the item ID that this fragment
      * represents.g
      */
+    private List<ImageView>  imageList = new ArrayList<ImageView>();
+
     public static final String ARG_ITEM_ID = "item_id";
-    Bitmap bitmap;
+    List<Bitmap> bitmap = new ArrayList<Bitmap>();
     /**
      * The dummy content this fragment is presenting. */
     View rootView;
@@ -57,8 +65,9 @@ public class ItemDetailFragment extends Fragment {
         }
     };
     ImageView imageview;
+    ImageView view_col ;
     public DetailContent mDetail;
-
+    ImageView imageView_scroll;
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -73,7 +82,6 @@ public class ItemDetailFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Activity activity = this.getActivity();
-        imageview=(ImageView)activity.findViewById(R.id.news_image);
 
 
         if (getArguments().containsKey(ARG_ITEM_ID)) {
@@ -97,13 +105,17 @@ public class ItemDetailFragment extends Fragment {
                         {
 
                             Resources res = getResources();
-                            bitmap = BitmapFactory.decodeResource(res, R.drawable.disconnect);
+                            bitmap.add(BitmapFactory.decodeResource(res, R.drawable.disconnect)) ;
                         }
                         else {
-                            URL url = new URL(str);
-                            InputStream is = url.openStream();
-                            bitmap = BitmapFactory.decodeStream(is);
-                            is.close();
+
+                            for(int i=1; i<=mDetail.detailItem.Picture.size(); i++)
+                            {
+                                URL url = new URL(mDetail.detailItem.Picture.get(i-1));
+                                InputStream is = url.openStream();
+                                bitmap.add(BitmapFactory.decodeStream(is));
+                                is.close();
+                            }
                         }
                         Message msg = new Message();
                         msg.what = 1;
@@ -168,17 +180,62 @@ public class ItemDetailFragment extends Fragment {
             ((TextView) rootView.findViewById(R.id.item_detail)).setText(mDetail.detailItem.Content);
             ((TextView) rootView.findViewById(R.id.item_author)).setText(mDetail.detailItem.Author);
             ((TextView) rootView.findViewById(R.id.item_title)).setText(mDetail.detailItem.Title);
-            int screenWidth = this.getActivity().getWindowManager().getDefaultDisplay().getWidth();
-            ViewGroup.LayoutParams lp = ((ImageView) rootView.findViewById(R.id.news_image)).getLayoutParams();
-            lp.width = screenWidth;
-            lp.height = ViewGroup.LayoutParams.WRAP_CONTENT;
-            ((ImageView) rootView.findViewById(R.id.news_image)).setLayoutParams(lp);
-            ((ImageView) rootView.findViewById(R.id.news_image)).setMaxWidth(screenWidth);
-            ((ImageView) rootView.findViewById(R.id.news_image)).setMaxHeight(screenWidth * 5);
-            ((ImageView) rootView.findViewById(R.id.news_image)).setMinimumHeight(screenWidth * 0);
-            if (bitmap != null && !bitmap.isRecycled() && Data.if_pic) {
-                ((ImageView) rootView.findViewById(R.id.news_image)).setImageBitmap(bitmap);
+          // if (bitmap != null && !bitmap.isRecycled() && Data.if_pic) {
+                Log.v("bitmap_in","bitmap_in");
+          //      ((ImageView) rootView.findViewById(R.id.imageview_bg)).setImageBitmap(bitmap);
+          //  }
+
+            if (bitmap != null && !bitmap.get(0).isRecycled() && Data.if_pic) {
+                imageview = (ImageView)getActivity().findViewById(R.id.imageview_bg);
+                imageview.setImageBitmap(bitmap.get(0));
+                for (int i = 1; i <= bitmap.size(); i++) {
+                    ImageView imageView = new ImageView(getContext());
+                    imageView.setImageBitmap(bitmap.get(i - 1));
+                    imageList.add(imageView);
+                }
             }
+            else
+            {
+                ImageView imageView = new ImageView(getContext());
+                imageView.setImageResource(R.drawable.ic_launcher);
+                imageList.add(imageView);
+
+            }
+                PagerAdapter pagerAdapter = new PagerAdapter() {  
+              
+            @Override  
+            public boolean isViewFromObject(View arg0, Object arg1) {  
+                // TODO Auto-generated method stub  
+                return arg0 == arg1;  
+            }  
+              
+            @Override  
+            public int getCount() {  
+                // TODO Auto-generated method stub  
+                return imageList.size();
+            }  
+              
+            @Override  
+            public void destroyItem(ViewGroup container, int position,  
+                    Object object) {  
+                // TODO Auto-generated method stub  
+                container.removeView(imageList.get(position));
+            }  
+              
+            @Override  
+            public Object instantiateItem(ViewGroup container, int position) {  
+                // TODO Auto-generated method stub  
+                container.addView(imageList.get(position));
+                  
+                  
+                return imageList.get(position);
+            }  
+        };
+
+                ((ViewPager) rootView.findViewById(R.id.viewPager)).setAdapter(pagerAdapter);
+
+
+
         }
     }
 }

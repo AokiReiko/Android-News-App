@@ -8,4 +8,6 @@
     <color name="Text_Color">#000000</color>
     <color name="Background">#ffffff</color>
     <color name="white">#ffffff</color>
+    <color name="Title_color">#038df7</color>
+    <color name="Line_color">#c9c8c7</color>
 </resources>
