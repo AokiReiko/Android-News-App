@@ -37,6 +37,11 @@
             android:parentActivityName=".ItemListActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:exported="true">
+            <intent-filter>
+                <action android:name="com.sina.weibo.sdk.action.ACTION_SDK_REQ_ACTIVITY" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="test.newsbulletin.ItemListActivity" />
@@ -72,6 +77,8 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ItemListActivity" />
         </activity>
+        <meta-data android:name="Mob-AppKey" android:value="20f69f647b3e4"/>
+        <meta-data android:name="Mob-AppSecret" android:value="e4c837b462df2c5fbd8a93e7aa91e910"/>
     </application>
 
 </manifest>

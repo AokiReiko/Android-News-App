@@ -12,6 +12,7 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/draglibrary" />
             <option value="$PROJECT_DIR$/libammsdk" />
+            <option value="$PROJECT_DIR$/weibosdkcore" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

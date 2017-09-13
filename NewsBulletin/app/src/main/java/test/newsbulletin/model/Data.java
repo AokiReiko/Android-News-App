@@ -1,9 +1,13 @@
 package test.newsbulletin.model;
 import android.app.Application;
 import android.content.Context;
+import android.provider.SyncStateContract;
 import android.util.Log;
 
 import com.iflytek.cloud.SpeechUtility;
+import com.sina.weibo.sdk.api.share.IWeiboShareAPI;
+import com.sina.weibo.sdk.api.share.WeiboShareAPIImpl;
+import com.sina.weibo.sdk.api.share.WeiboShareSDK;
 import com.tencent.mm.sdk.openapi.IWXAPI;
 import com.tencent.mm.sdk.openapi.WXAPIFactory;
 
@@ -27,9 +31,10 @@ public class Data extends Application {
 
     public static final String APP_ID = "wx37d748ca3aa35402";
     public static final String APP_SECRET = "5ff552fa0d93a1fd9e60913a1c737a2f";
+    public static final String APP_KEY = "20f699a2b3bf7";
 
     public IWXAPI api;//这个对象是专门用来向微信发送数据的一个重要接口,使用强引用持有,所有的信息发送都是基于这个对象的
-
+    public IWeiboShareAPI weibo_api;
 
     public static boolean if_pic = true;
     public static boolean which_inter = true;
@@ -54,15 +59,20 @@ public class Data extends Application {
         super.onCreate();
         FileIO.application = this;
         buildTabList();
-        registerWeChat(this);
-        Log.v("checkit",unusedTabList.toString());
+        register(this);
+
         if(isSpeechEnable) {
             SpeechUtility.createUtility(this, "appid=" + getString(R.string.app_id));
         }
     }
-    public void registerWeChat(Context context) {   //向微信注册app
+    public void register(Context context) {   //向微信注册app
         api = WXAPIFactory.createWXAPI(context, APP_ID, true);
         api.registerApp(APP_ID);
+
+        weibo_api = WeiboShareSDK.createWeiboAPI(context, "20f699a2b3bf7");
+        if (weibo_api.isWeiboAppInstalled() && weibo_api.checkEnvironment(true)) {
+            weibo_api.registerApp();
+        }
     }
 
     private void buildTabList() {

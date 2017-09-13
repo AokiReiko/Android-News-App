@@ -166,7 +166,7 @@ public class CollectionActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onBindViewHolder(final CollectionActivity.SimpleItemRecyclerViewAdapter.ViewHolder holder, int position) {
+        public void onBindViewHolder(final CollectionActivity.SimpleItemRecyclerViewAdapter.ViewHolder holder, final int position) {
             holder.mItem = mList.get(position);
 
             //holder.mIdView.setText(mnewsList.get(position).id);
@@ -177,6 +177,7 @@ public class CollectionActivity extends AppCompatActivity {
                         @Override
                         public boolean onMenuItemClick(MenuItem menuItem) {
                             io.eraseDetail(holder.mItem.news_id);
+                            mAdapter.mList.remove(position);
                             mAdapter.notifyDataSetChanged();
                             return false;
                         }

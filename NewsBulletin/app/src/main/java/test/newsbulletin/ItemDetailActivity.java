@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -22,12 +23,18 @@ import android.support.v7.widget.ShareActionProvider;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.sina.weibo.sdk.api.ImageObject;
+import com.sina.weibo.sdk.api.WeiboMessage;
+import com.sina.weibo.sdk.api.share.SendMessageToWeiboRequest;
+import com.sina.weibo.sdk.api.share.WeiboShareAPIImpl;
 import com.tencent.mm.sdk.openapi.SendMessageToWX;
 import com.tencent.mm.sdk.openapi.WXMediaMessage;
 import com.tencent.mm.sdk.openapi.WXWebpageObject;
+import com.tencent.mm.sdk.platformtools.BackwardSupportUtil;
 
 import java.io.File;
 
+import test.newsbulletin.file.FileIO;
 import test.newsbulletin.model.Data;
 import test.newsbulletin.model.DetailContent;
 import test.newsbulletin.model.NewsList;
@@ -149,9 +156,25 @@ public class ItemDetailActivity extends AppCompatActivity {
                 return true;
             } else if (id == R.id.share_other){
                 Log.d("func","click other!!");
+
+                WeiboMessage weiboMessage = new WeiboMessage();
+                ImageObject imageObject = new ImageObject();
+                Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
+                imageObject.setImageObject(bitmap);
+                weiboMessage.mediaObject = imageObject;
+                SendMessageToWeiboRequest request = new SendMessageToWeiboRequest();
+                request.transaction = String.valueOf(System.currentTimeMillis());
+                request.message = weiboMessage;
+                Data d = (Data) getApplication();
+                Log.d("func","weibo");
+                d.weibo_api.sendRequest(request);
                 return true;
                 //
-            } else {
+            } else if (id == R.id.collect) {
+                FileIO io = new FileIO();
+                io.saveDetail(fragment.mDetail);
+                return true;
+            } else{
                 DetailContent.NewsDetailItem item;
                 if (fragment != null && fragment.mDetail != null){
                     item = fragment.mDetail.detailItem;
@@ -182,8 +205,6 @@ public class ItemDetailActivity extends AppCompatActivity {
                 }
                 Data d = (Data) getApplication();
                 d.api.sendReq(req);
-
-
 
                 return true;
             }
